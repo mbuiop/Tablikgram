@@ -1,0 +1,212 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">صفحه اصلی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        .btn-3d {
+            transition: all 0.2s;
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        }
+        .btn-3d:hover {
+            transform: perspective(1000px) rotateX(-5deg) rotateY(5deg);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.4);
+        }
+        .btn-3d:active {
+            transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center">
+    <div class="container mx-auto p-4">
+        <div class="flex justify-end mb-4">
+            <select id="languageSelect" onchange="changeLanguage()" class="btn-3d bg-gray-700 text-white p-2 rounded-lg">
+                <option value="fa">فارسی</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="ar">العربية</option>
+                <option value="zh">中文</option>
+                <option value="ru">Русский</option>
+                <option value="pt">Português</option>
+                <option value="ja">日本語</option>
+            </select>
+        </div>
+        <h1 id="main-title" class="text-4xl font-bold mb-8 text-center">پنل اصلی</h1>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <a href="sit.html" id="btn-register" class="btn-3d bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-center">ثبت سایت</a>
+            <a href="agh.html" id="btn-existing" class="btn-3d bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-center">سایت‌های موجود</a>
+            <a href="mod.html" id="btn-management" class="btn-3d bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg text-center">مدیریت</a>
+            <a href="sig.html" id="btn-signals" class="btn-3d bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg text-center">سیگنال‌ها</a>
+            <a href="mod.html#support" id="btn-support" class="btn-3d bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg text-center">پشتیبانی</a>
+        </div>
+    </div>
+    <script>
+        const translations = {
+            fa: {
+                'page-title': 'صفحه اصلی',
+                'main-title': 'پنل اصلی',
+                'btn-register': 'ثبت سایت',
+                'btn-existing': 'سایت‌های موجود',
+                'btn-management': 'مدیریت',
+                'btn-signals': 'سیگنال‌ها',
+                'btn-support': 'پشتیبانی'
+            },
+            en: {
+                'page-title': 'Home Page',
+                'main-title': 'Main Panel',
+                'btn-register': 'Register Site',
+                'btn-existing': 'Existing Sites',
+                'btn-management': 'Management',
+                'btn-signals': 'Signals',
+                'btn-support': 'Support'
+            },
+            es: {
+                'page-title': 'Página Principal',
+                'main-title': 'Panel Principal',
+                'btn-register': 'Registrar Sitio',
+                'btn-existing': 'Sitios Existentes',
+                'btn-management': 'Gestión',
+                'btn-signals': 'Señales',
+                'btn-support': 'Soporte'
+            },
+            fr: {
+                'page-title': 'Page d\'Accueil',
+                'main-title': 'Panneau Principal',
+                'btn-register': 'Enregistrer un Site',
+                'btn-existing': 'Sites Existants',
+                'btn-management': 'Gestion',
+                'btn-signals': 'Signaux',
+                'btn-support': 'Support'
+            },
+            de: {
+                'page-title': 'Startseite',
+                'main-title': 'Hauptpanel',
+                'btn-register': 'Website Registrieren',
+                'btn-existing': 'Vorhandene Websites',
+                'btn-management': 'Verwaltung',
+                'btn-signals': 'Signale',
+                'btn-support': 'Support'
+            },
+            ar: {
+                'page-title': 'الصفحة الرئيسية',
+                'main-title': 'اللوحة الرئيسية',
+                'btn-register': 'تسجيل الموقع',
+                'btn-existing': 'المواقع الحالية',
+                'btn-management': 'الإدارة',
+                'btn-signals': 'الإشارات',
+                'btn-support': 'الدعم'
+            },
+            zh: {
+                'page-title': '主页',
+                'main-title': '主面板',
+                'btn-register': '注册网站',
+                'btn-existing': '现有网站',
+                'btn-management': '管理',
+                'btn-signals': '信号',
+                'btn-support': '支持'
+            },
+            ru: {
+                'page-title': 'Главная Страница',
+                'main-title': 'Главная Панель',
+                'btn-register': 'Зарегистрировать Сайт',
+                'btn-existing': 'Существующие Сайты',
+                'btn-management': 'Управление',
+                'btn-signals': 'Сигналы',
+                'btn-support': 'Поддержка'
+            },
+            pt: {
+                'page-title': 'Página Inicial',
+                'main-title': 'Painel Principal',
+                'btn-register': 'Registrar Site',
+                'btn-existing': 'Sites Existentes',
+                'btn-management': 'Gerenciamento',
+                'btn-signals': 'Sinais',
+                'btn-support': 'Suporte'
+            },
+            ja: {
+                'page-title': 'ホームページ',
+                'main-title': 'メインパネル',
+                'btn-register': 'サイト登録',
+                'btn-existing': '既存のサイト',
+                'btn-management': '管理',
+                'btn-signals': 'シグナル',
+                'btn-support': 'サポート'
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('languageSelect').value;
+            localStorage.setItem('language', lang);
+            updateLanguage(lang);
+        }
+
+        function updateLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'fa' || lang === 'ar' ? 'rtl' : 'ltr';
+            const trans = translations[lang] || translations['fa'];
+            Object.keys(trans).forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (id === 'page-title') {
+                        document.title = trans[id];
+                    } else {
+                        element.textContent = trans[id];
+                    }
+                }
+            });
+        }
+
+        window.onload = () => {
+            const savedLang = localStorage.getItem('language') || 'fa';
+            document.getElementById('languageSelect').value = savedLang;
+            updateLanguage(savedLang);
+        };
+    </script>
+</body>
+</html>
