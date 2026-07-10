@@ -1,146 +1,1350 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-* {
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-html, body {
-    height:100%;
-    overflow:hidden;
-}
-body {
-    background:url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') fixed center/cover no-repeat;
-    font-family:system-ui;
-    position:fixed;
-    width:100%;
-    height:100%;
-    top:0;
-    left:0;
-}
-.overlay {
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.6);
-    top:0;
-    left:0;
-}
-.container {
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    width:100%;
-    max-width:500px;
-    padding:20px;
-}
-.btns {
-    display:flex;
-    gap:15px;
-    justify-content:center;
-    flex-wrap:wrap;
-}
-.btn {
-    width:120px;
-    height:120px;
-    border:none;
-    border-radius:18px;
-    color:white;
-    font-size:16px;
-    font-weight:600;
-    cursor:pointer;
-    position:relative;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    gap:12px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.4);
-    transition:all 0.3s ease;
-    flex-shrink:0;
-}
-.btn:hover {
-    transform:scale(1.05);
-    box-shadow:0 12px 25px rgba(0,0,0,0.5);
-}
-.btn:active {
-    transform:scale(0.98);
-}
-.btn1 {background:linear-gradient(135deg,#FF416C,#FF4B2B);}
-.btn2 {background:linear-gradient(135deg,#36D1DC,#5B86E5);}
-.btn3 {background:linear-gradient(135deg,#834d9b,#d04ed6);}
-.loader {
-    display:none;
-    width:28px;
-    height:28px;
-    border:3px solid rgba(255,255,255,0.2);
-    border-top:3px solid white;
-    border-radius:50%;
-    animation:spin 0.8s linear infinite;
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-}
-@keyframes spin {
-    0% {transform:translate(-50%, -50%) rotate(0deg);}
-    100% {transform:translate(-50%, -50%) rotate(360deg);}
-}
-.btn-text {
-    transition:opacity 0.3s;
-}
-@media (max-width: 600px) {
-    .btn {
-        width:110px;
-        height:110px;
-        font-size:15px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pro Invoicer · Global</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        /* ===== RESET & ROOT ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #0f2b4a;
+            --primary-light: #1e4a7a;
+            --accent: #d4a843;
+            --success: #1f8b4c;
+            --danger: #b33c3c;
+            --gray: #4a5568;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --shadow: 0 8px 30px rgba(0,0,0,0.07);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
+            --radius: 20px;
+            --transition: all 0.25s ease;
+        }
+        body {
+            font-family: 'Inter', 'Vazirmatn', sans-serif;
+            background: #eef2f7;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        /* ===== MAIN WRAPPER ===== */
+        .app-wrapper {
+            max-width: 1440px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 0;
+            position: relative;
+        }
+        @media (max-width: 1100px) {
+            .app-wrapper { grid-template-columns: 1fr; }
+        }
+
+        /* ===== LEFT PANEL (FORM) ===== */
+        .form-panel {
+            padding: 32px 30px;
+            background: white;
+            overflow-y: auto;
+            max-height: 98vh;
+        }
+        .form-panel::-webkit-scrollbar { width: 4px; }
+        .form-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .panel-header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .panel-header h1 i { color: var(--accent); }
+        .lang-group {
+            display: flex;
+            gap: 4px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+        }
+        .lang-btn {
+            padding: 6px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .lang-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .lang-btn:hover { color: var(--primary); }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 22px;
+        }
+        .form-grid .full-width { grid-column: 1 / -1; }
+        .form-group { margin-bottom: 2px; }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.78rem;
+            color: var(--gray);
+            margin-bottom: 3px;
+            letter-spacing: 0.3px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 11px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.88rem;
+            transition: var(--transition);
+            background: white;
+            font-family: inherit;
+        }
+        .form-control:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(30, 74, 122, 0.10);
+        }
+        textarea.form-control { resize: vertical; min-height: 54px; }
+
+        /* Items */
+        .items-area { margin: 16px 0 10px; }
+        .items-area .card-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .invoice-item {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .invoice-item:hover { border-color: var(--primary-light); background: #f1f5f9; }
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 0.8fr 1fr 0.8fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .item-row .form-control { padding: 9px 12px; font-size: 0.82rem; }
+        .item-row .btn { padding: 9px 12px; width: auto; min-width: 36px; }
+        .item-desc { grid-column: 1 / -1; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 18px rgba(15,43,74,0.2); }
+        .btn-primary:hover { background: #0a1e33; transform: translateY(-2px); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #146d3a; transform: translateY(-2px); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #922e2e; transform: translateY(-2px); }
+        .btn-light { background: white; color: #1a202c; border: 1px solid var(--border); }
+        .btn-light:hover { border-color: var(--primary-light); background: #f7fafc; }
+        .btn-accent { background: var(--accent); color: var(--primary); }
+        .btn-accent:hover { background: #c49a3a; transform: translateY(-2px); }
+        .btn-sm { padding: 7px 14px; font-size: 0.78rem; }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0 6px;
+        }
+        .action-row .btn { flex: 1; min-width: 110px; }
+
+        /* ===== RIGHT PANEL (PREVIEW) ===== */
+        .preview-panel {
+            background: #f1f5f9;
+            padding: 28px 26px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-left: 1px solid var(--border);
+            min-height: 100%;
+        }
+        @media (max-width: 1100px) {
+            .preview-panel { border-left: none; border-top: 1px solid var(--border); }
+        }
+        .preview-panel .panel-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.05rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .invoice-preview-wrap {
+            width: 100%;
+            max-width: 720px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 6px;
+            transition: var(--transition);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .invoice-preview-wrap:hover { box-shadow: var(--shadow-lg); }
+
+        .invoice-template {
+            background: white;
+            border-radius: 14px;
+            padding: 28px 32px;
+            font-family: 'Inter', 'Vazirmatn', sans-serif;
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+            font-size: 0.82rem;
+        }
+        .invoice-template::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .preview-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
+            width: 100%;
+            justify-content: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .preview-toolbar .btn { min-width: 110px; }
+
+        /* ===== INVOICE STYLES ===== */
+        .inv-header { text-align: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--primary); }
+        .inv-header h2 { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .inv-header p { color: var(--gray); font-size: 0.8rem; }
+        .inv-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+        .inv-box { background: #f8fafc; padding: 14px 18px; border-radius: 10px; border-right: 3px solid var(--primary); }
+        .inv-box h4 { font-weight: 700; color: var(--primary); margin-bottom: 4px; font-size: 0.85rem; }
+        .inv-box p { margin: 2px 0; font-size: 0.82rem; }
+        .inv-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.75rem; border: 1px solid var(--border); }
+        .inv-table th { background: var(--primary); color: white; padding: 8px; text-align: center; }
+        .inv-table td { padding: 8px; border: 1px solid var(--border); text-align: center; }
+        .inv-table tbody tr:nth-child(even) { background: #f8fafc; }
+        .inv-totals { background: #f0f7ff; padding: 14px 18px; border-radius: 10px; margin: 14px 0; border-right: 3px solid var(--primary); }
+        .tot-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed #d1d5db; font-size: 0.82rem; }
+        .tot-row:last-child { border-bottom: none; font-weight: 800; font-size: 0.95rem; color: var(--primary); padding-top: 6px; border-top: 2px solid var(--primary); }
+        .inv-footer { margin-top: 18px; padding-top: 14px; border-top: 1px solid #edf2f7; display: flex; justify-content: space-between; gap: 24px; }
+        .sign-box { text-align: center; flex: 1; }
+        .sign-line { border-top: 1px solid #4a5568; margin-top: 32px; padding-top: 4px; min-width: 80px; }
+        .watermark { position: absolute; opacity: 0.03; font-size: 70px; font-weight: 900; color: var(--primary); transform: rotate(-25deg); pointer-events: none; z-index: 0; }
+        .badge-num { position: absolute; top: 12px; left: 18px; background: var(--primary); color: white; padding: 3px 12px; border-radius: 30px; font-weight: 700; font-size: 0.65rem; }
+        .qr-icon { position: absolute; bottom: 14px; left: 18px; font-size: 24px; color: var(--primary); opacity: 0.25; }
+
+        /* ===== COLOR PALETTE ===== */
+        .color-palette {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin: 8px 0 6px;
+            flex-wrap: wrap;
+        }
+        .color-dot {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .color-dot:hover { transform: scale(1.10); }
+        .color-dot.active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,43,74,0.15); }
+
+        /* ===== MODALS ===== */
+        .modal-overlay {
+            position: fixed; top:0;left:0;right:0;bottom:0;
+            background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000; padding: 20px;
+        }
+        .modal {
+            background: white; border-radius: 24px; max-width: 460px; width: 100%;
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+        .modal-header {
+            padding: 18px 24px; border-bottom:1px solid var(--border);
+            display:flex; justify-content:space-between; align-items:center;
+            background: var(--primary); color:white; border-radius:24px 24px 0 0;
+        }
+        .modal-header h3 { font-size:1.05rem; display:flex; align-items:center; gap:10px; }
+        .close-btn { background:rgba(255,255,255,0.12); border:none; width:34px; height:34px; border-radius:50%; color:white; font-size:15px; cursor:pointer; transition:var(--transition); }
+        .close-btn:hover { background:rgba(255,255,255,0.22); transform:rotate(90deg); }
+        .modal-body { padding:22px; }
+        .modal-footer { padding:14px 24px; border-top:1px solid var(--border); display:flex; gap:12px; justify-content:flex-end; background:#f8fafc; border-radius:0 0 24px 24px; }
+        .customer-item { padding:12px 16px; border:1px solid var(--border); border-radius:12px; margin-bottom:8px; cursor:pointer; transition:var(--transition); display:flex; justify-content:space-between; align-items:center; }
+        .customer-item:hover { border-color:var(--primary-light); background:#f1f5f9; }
+
+        /* ===== LOADING ===== */
+        .loading-overlay {
+            position:fixed; top:0;left:0;right:0;bottom:0;
+            background:rgba(0,0,0,0.7); backdrop-filter:blur(6px);
+            display:none; flex-direction:column; justify-content:center; align-items:center;
+            z-index:3000; color:white;
+        }
+        .spinner { width:48px; height:48px; border:4px solid rgba(255,255,255,0.15); border-radius:50%; border-top-color:white; animation:spin 0.8s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .load-text { margin-top:16px; font-weight:500; font-size:1rem; }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position:fixed; top:24px; left:50%; transform:translateX(-50%);
+            padding:12px 28px; border-radius:40px; color:white; font-weight:600; font-size:0.9rem;
+            z-index:5000; box-shadow:0 12px 32px rgba(0,0,0,0.15);
+            animation:toastIn 0.3s ease; max-width:90%; text-align:center;
+        }
+        @keyframes toastIn { from {opacity:0; transform:translateX(-50%) translateY(-18px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }
+        .toast-success { background:var(--success); }
+        .toast-error { background:var(--danger); }
+        .toast-info { background:var(--primary); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid .full-width { grid-column: 1; }
+            .item-row { grid-template-columns: 1fr 1fr; }
+            .item-row .btn { grid-column: span 2; }
+            .item-desc { grid-column: 1 / -1; }
+            .inv-duo { grid-template-columns: 1fr; }
+            .app-wrapper { border-radius: 18px; }
+            .form-panel { padding: 18px 14px; max-height: none; }
+            .preview-panel { padding: 18px 14px; }
+            .invoice-template { padding: 18px 14px; }
+            .action-row .btn { min-width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .panel-header h1 { font-size: 1.1rem; }
+            .lang-btn { padding: 4px 10px; font-size: 0.7rem; }
+            .invoice-template { font-size: 0.7rem; padding: 14px 10px; }
+            .inv-table th, .inv-table td { padding: 5px 3px; font-size: 0.65rem; }
+            .preview-toolbar .btn { min-width: 100%; }
+            .color-dot { width: 24px; height: 24px; }
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            body * { visibility: hidden; }
+            .invoice-template, .invoice-template * { visibility: visible; }
+            .invoice-template { position: absolute; left:0; top:0; width:100%; padding:16px; border:none; box-shadow:none; }
+            .no-print { display:none !important; }
+            @page { size: A4 landscape; margin: 10mm; }
+        }
+    </style>
 </head>
 <body>
-<div class="overlay"></div>
-<div class="container">
-    <div class="btns">
-        <button class="btn btn1" onclick="startLoading(this, 'm6.html')">
-            <span class="btn-text">فاکتور یک</span>
-            <div class="loader"></div>
-        </button>
-        <button class="btn btn2" onclick="startLoading(this, 'm7.html')">
-            <span class="btn-text">فاکتور دو</span>
-            <div class="loader"></div>
-        </button>
-        <button class="btn btn3" onclick="startLoading(this, 'mpo.html')">
-            <span class="btn-text">فاکتور سه</span>
-            <div class="loader"></div>
-        </button>
-    </div>
-</div>
 
-<script>
-function startLoading(button, url) {
-    const text = button.querySelector('.btn-text');
-    const loader = button.querySelector('.loader');
-    
-    // مخفی کردن متن و نمایش لودینگ
-    text.style.opacity = '0';
-    setTimeout(() => {
-        text.style.display = 'none';
-        loader.style.display = 'block';
-        button.disabled = true;
-    }, 150);
-    
-    // هدایت بعد از 1.2 ثانیه
-    setTimeout(() => {
-        window.location.href = url;
-    }, 1200);
-}
-</script>
+    <!-- ===== APP WRAPPER ===== -->
+    <div class="app-wrapper" id="app">
+
+        <!-- ===== LEFT: FORM PANEL ===== -->
+        <div class="form-panel">
+            <div class="panel-header">
+                <h1><i class="fas fa-file-invoice"></i> <span data-i18n="brand">Pro Invoicer</span></h1>
+                <div class="lang-group">
+                    <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn" data-lang="fa" onclick="switchLang('fa')">FA</button>
+                    <button class="lang-btn" data-lang="tr" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <!-- Base Info -->
+                <div class="form-group">
+                    <label class="form-label" data-i18n="inv_no">Invoice No</label>
+                    <input type="text" class="form-control" id="invoice-number" value="INV-2026-001">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="inv_date">Date</label>
+                    <input type="date" class="form-control" id="invoice-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="inv_type">Type</label>
+                    <select class="form-control" id="invoice-type">
+                        <option value="Sale" data-i18n="sale">Sale</option>
+                        <option value="Proforma" data-i18n="proforma">Proforma</option>
+                        <option value="Service" data-i18n="service">Service</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="payment">Payment</label>
+                    <select class="form-control" id="payment-method">
+                        <option value="Cash" data-i18n="cash">Cash</option>
+                        <option value="Card" data-i18n="card">Card</option>
+                        <option value="Check" data-i18n="check">Check</option>
+                        <option value="Bank Transfer" data-i18n="transfer">Bank Transfer</option>
+                    </select>
+                </div>
+
+                <!-- Seller -->
+                <div class="form-group full-width">
+                    <label class="form-label" data-i18n="seller_name">Seller Name</label>
+                    <input type="text" class="form-control" id="seller-name" value="Parsian Mobile Store">
+                </div>
+                <div class="form-group full-width">
+                    <label class="form-label" data-i18n="seller_address">Seller Address</label>
+                    <textarea class="form-control" id="seller-address" rows="1">Tehran, Valiasr St, No. 240</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="seller_phone">Phone</label>
+                    <input type="text" class="form-control" id="seller-phone" value="+98 21 1234 5678">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="tax_rate">Tax Rate (%)</label>
+                    <input type="number" class="form-control" id="tax-rate" value="9" min="0" max="100">
+                </div>
+
+                <!-- Customer -->
+                <div class="form-group full-width">
+                    <label class="form-label" data-i18n="customer_name">Customer Name</label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" class="form-control" id="customer-name" placeholder="Customer name" value="Saeed Kanani" style="flex:1;">
+                        <button class="btn btn-light btn-sm" onclick="showCustomers()"><i class="fas fa-users"></i></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="customer_phone">Customer Phone</label>
+                    <input type="text" class="form-control" id="customer-phone" value="+98 913 765 7870">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="customer_code">National ID</label>
+                    <input type="text" class="form-control" id="customer-code" placeholder="National ID">
+                </div>
+                <div class="form-group full-width">
+                    <label class="form-label" data-i18n="notes">Notes</label>
+                    <textarea class="form-control" id="notes" rows="1" placeholder="Warranty, delivery terms...">18 months warranty</textarea>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="items-area">
+                <div class="card-title"><i class="fas fa-shopping-cart"></i> <span data-i18n="items">Invoice Items</span></div>
+                <div id="invoice-items">
+                    <div class="invoice-item">
+                        <div class="item-row">
+                            <input type="text" class="form-control item-name" placeholder="Item name" value="Samsung Galaxy S24">
+                            <input type="number" class="form-control item-quantity" placeholder="Qty" value="1" min="1">
+                            <input type="number" class="form-control item-price" placeholder="Price" value="1200">
+                            <input type="number" class="form-control item-discount" placeholder="Disc %" value="5" min="0" max="100">
+                            <button class="btn btn-danger" onclick="removeItem(this)"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="item-row item-desc">
+                            <input type="text" class="form-control" placeholder="Description (optional)" value="S24 256GB, Phantom Black" style="grid-column:1/-1;">
+                        </div>
+                    </div>
+                    <div class="invoice-item">
+                        <div class="item-row">
+                            <input type="text" class="form-control item-name" placeholder="Item name" value="Xiaomi Power Bank">
+                            <input type="number" class="form-control item-quantity" placeholder="Qty" value="1" min="1">
+                            <input type="number" class="form-control item-price" placeholder="Price" value="65">
+                            <input type="number" class="form-control item-discount" placeholder="Disc %" value="0" min="0" max="100">
+                            <button class="btn btn-danger" onclick="removeItem(this)"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="item-row item-desc">
+                            <input type="text" class="form-control" placeholder="Description (optional)" value="20000mAh, Fast Charge" style="grid-column:1/-1;">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success btn-sm" onclick="addNewItem()" style="margin-top:4px;"><i class="fas fa-plus-circle"></i> <span data-i18n="add_item">Add Item</span></button>
+            </div>
+
+            <!-- Color Palette -->
+            <div class="color-palette">
+                <span style="font-weight:600; font-size:0.8rem; color:var(--gray);"><span data-i18n="color">Color:</span></span>
+                <span class="color-dot active" style="background:#0f2b4a;" data-color="#0f2b4a" onclick="setColor('#0f2b4a', this)"></span>
+                <span class="color-dot" style="background:#1e4a7a;" data-color="#1e4a7a" onclick="setColor('#1e4a7a', this)"></span>
+                <span class="color-dot" style="background:#b33c3c;" data-color="#b33c3c" onclick="setColor('#b33c3c', this)"></span>
+                <span class="color-dot" style="background:#1f8b4c;" data-color="#1f8b4c" onclick="setColor('#1f8b4c', this)"></span>
+                <span class="color-dot" style="background:#b7791f;" data-color="#b7791f" onclick="setColor('#b7791f', this)"></span>
+                <span class="color-dot" style="background:#6b46c1;" data-color="#6b46c1" onclick="setColor('#6b46c1', this)"></span>
+            </div>
+
+            <!-- Action Buttons (top) -->
+            <div class="action-row">
+                <button class="btn btn-primary" onclick="generateInvoice()"><i class="fas fa-eye"></i> <span data-i18n="preview">Preview</span></button>
+                <button class="btn btn-success" onclick="saveInvoice()"><i class="fas fa-save"></i> <span data-i18n="save">Save</span></button>
+            </div>
+        </div>
+
+        <!-- ===== RIGHT: PREVIEW PANEL ===== -->
+        <div class="preview-panel">
+            <div class="panel-title"><i class="fas fa-file-invoice"></i> <span data-i18n="preview_title">Invoice Preview</span></div>
+
+            <div class="invoice-preview-wrap">
+                <div class="invoice-template" id="invoice-template">
+                    <div style="text-align:center; padding:40px 20px; color:var(--gray);">
+                        <i class="fas fa-file-invoice" style="font-size:44px; opacity:0.25; margin-bottom:14px;"></i>
+                        <p data-i18n="click_preview">Click "Preview" to generate invoice</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Buttons (bottom) -->
+            <div class="preview-toolbar">
+                <button class="btn btn-primary" onclick="printInvoice()"><i class="fas fa-print"></i> <span data-i18n="print">Print</span></button>
+                <button class="btn btn-success" onclick="downloadImage()"><i class="fas fa-download"></i> <span data-i18n="download_image">Download Image</span></button>
+                <button class="btn btn-accent" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> <span data-i18n="download_pdf">Download PDF</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODALS ===== -->
+    <div id="customers-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-users"></i> <span data-i18n="customers">Customers</span></h3>
+                <button class="close-btn" onclick="closeModal('customers-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-primary" onclick="showAddCustomer()" style="width:100%; margin-bottom:14px;">
+                    <i class="fas fa-user-plus"></i> <span data-i18n="add_customer">Add New Customer</span>
+                </button>
+                <div id="customers-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light" onclick="closeModal('customers-modal')"><span data-i18n="close">Close</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-customer-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> <span data-i18n="add_customer">Add Customer</span></h3>
+                <button class="close-btn" onclick="closeModal('add-customer-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="customer_name">Full Name</label>
+                    <input type="text" class="form-control" id="new-customer-name" placeholder="Full name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="customer_phone">Phone</label>
+                    <input type="tel" class="form-control" id="new-customer-phone" placeholder="+98 912 345 6789">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" data-i18n="customer_address">Address</label>
+                    <textarea class="form-control" id="new-customer-address" rows="2" placeholder="Full address"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light" onclick="closeModal('add-customer-modal')"><span data-i18n="cancel">Cancel</span></button>
+                <button class="btn btn-primary" onclick="saveNewCustomer()"><span data-i18n="save">Save</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LOADING ===== -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <div id="load-text" class="load-text">Processing...</div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  MULTI-LANGUAGE WITH CURRENCY
+        // ============================================================
+        const LANG = {
+            en: {
+                brand: 'Pro Invoicer',
+                inv_no: 'Invoice No',
+                inv_date: 'Date',
+                inv_type: 'Type',
+                sale: 'Sale',
+                proforma: 'Proforma',
+                service: 'Service',
+                payment: 'Payment',
+                cash: 'Cash',
+                card: 'Card',
+                check: 'Check',
+                transfer: 'Bank Transfer',
+                seller_name: 'Seller Name',
+                seller_address: 'Seller Address',
+                seller_phone: 'Phone',
+                tax_rate: 'Tax Rate (%)',
+                customer_name: 'Customer Name',
+                customer_phone: 'Customer Phone',
+                customer_code: 'National ID',
+                notes: 'Notes',
+                items: 'Invoice Items',
+                add_item: 'Add Item',
+                preview: 'Preview',
+                save: 'Save',
+                print: 'Print',
+                download_image: 'Download Image',
+                download_pdf: 'Download PDF',
+                close: 'Close',
+                cancel: 'Cancel',
+                customers: 'Customers',
+                add_customer: 'Add Customer',
+                customer_address: 'Customer Address',
+                preview_title: 'Invoice Preview',
+                click_preview: 'Click "Preview" to generate invoice',
+                color: 'Color:',
+                invoice_title: 'INVOICE',
+                subtotal: 'Subtotal',
+                discount: 'Discount',
+                tax: 'Tax',
+                total: 'Total Amount',
+                words: 'Amount in Words',
+                seller: 'Seller',
+                buyer: 'Buyer',
+                row: 'Row',
+                desc: 'Description',
+                qty: 'Qty',
+                price: 'Unit Price',
+                disc_pct: 'Disc. %',
+                disc_amt: 'Disc. Amount',
+                net: 'Net',
+                terms: 'Terms & Conditions',
+                sign_seller: 'Seller Signature & Stamp',
+                sign_buyer: 'Buyer Signature',
+                electronic: 'This invoice is electronically issued.',
+                no_customers: 'No customers registered',
+                select: 'Select',
+                currency: '$',
+                currency_name: 'USD',
+                currency_full: 'Dollars',
+                // messages
+                customer_added: 'Customer added successfully',
+                customer_selected: 'Customer selected',
+                invoice_created: 'Invoice created',
+                invoice_saved: 'Invoice saved',
+                at_least_one_item: 'At least one item required',
+                enter_customer: 'Please enter customer name',
+                image_downloaded: 'High-quality image downloaded',
+                pdf_downloaded: 'PDF downloaded',
+                error: 'Error, please try again'
+            },
+            fa: {
+                brand: 'فاکتورساز حرفه‌ای',
+                inv_no: 'شماره فاکتور',
+                inv_date: 'تاریخ',
+                inv_type: 'نوع',
+                sale: 'فروش',
+                proforma: 'پیش فاکتور',
+                service: 'خدمات',
+                payment: 'پرداخت',
+                cash: 'نقدی',
+                card: 'کارت به کارت',
+                check: 'چک',
+                transfer: 'انتقال بانکی',
+                seller_name: 'نام فروشنده',
+                seller_address: 'آدرس فروشنده',
+                seller_phone: 'تلفن',
+                tax_rate: 'مالیات (%)',
+                customer_name: 'نام مشتری',
+                customer_phone: 'تلفن مشتری',
+                customer_code: 'کد ملی',
+                notes: 'توضیحات',
+                items: 'اقلام فاکتور',
+                add_item: 'افزودن آیتم',
+                preview: 'پیش‌نمایش',
+                save: 'ذخیره',
+                print: 'چاپ',
+                download_image: 'دانلود عکس',
+                download_pdf: 'دانلود PDF',
+                close: 'بستن',
+                cancel: 'لغو',
+                customers: 'مشتریان',
+                add_customer: 'افزودن مشتری',
+                customer_address: 'آدرس مشتری',
+                preview_title: 'پیش‌نمایش فاکتور',
+                click_preview: 'برای مشاهده فاکتور، دکمه "پیش‌نمایش" را بزنید',
+                color: 'رنگ:',
+                invoice_title: 'فاکتور',
+                subtotal: 'جمع کل',
+                discount: 'تخفیف',
+                tax: 'مالیات',
+                total: 'مبلغ قابل پرداخت',
+                words: 'مبلغ به حروف',
+                seller: 'فروشنده',
+                buyer: 'خریدار',
+                row: 'ردیف',
+                desc: 'شرح کالا / خدمت',
+                qty: 'تعداد',
+                price: 'قیمت واحد',
+                disc_pct: 'تخفیف %',
+                disc_amt: 'مبلغ تخفیف',
+                net: 'جمع',
+                terms: 'شرایط و توضیحات',
+                sign_seller: 'امضا و مهر فروشنده',
+                sign_buyer: 'امضا خریدار',
+                electronic: 'این فاکتور به صورت الکترونیکی صادر شده است.',
+                no_customers: 'هیچ مشتری ثبت نشده است',
+                select: 'انتخاب',
+                currency: 'تومان',
+                currency_name: 'تومان',
+                currency_full: 'تومان',
+                customer_added: 'مشتری با موفقیت اضافه شد',
+                customer_selected: 'مشتری انتخاب شد',
+                invoice_created: 'فاکتور ایجاد شد',
+                invoice_saved: 'فاکتور ذخیره شد',
+                at_least_one_item: 'فاکتور باید حداقل یک آیتم داشته باشد',
+                enter_customer: 'لطفاً نام مشتری را وارد کنید',
+                image_downloaded: 'عکس با کیفیت بالا دانلود شد',
+                pdf_downloaded: 'PDF دانلود شد',
+                error: 'خطا رخ داد، دوباره تلاش کنید'
+            },
+            tr: {
+                brand: 'Profesyonel Fatura',
+                inv_no: 'Fatura No',
+                inv_date: 'Tarih',
+                inv_type: 'Tür',
+                sale: 'Satış',
+                proforma: 'Ön Fatura',
+                service: 'Hizmet',
+                payment: 'Ödeme',
+                cash: 'Nakit',
+                card: 'Kart',
+                check: 'Çek',
+                transfer: 'Banka Havalesi',
+                seller_name: 'Satıcı Adı',
+                seller_address: 'Satıcı Adresi',
+                seller_phone: 'Telefon',
+                tax_rate: 'Vergi Oranı (%)',
+                customer_name: 'Müşteri Adı',
+                customer_phone: 'Müşteri Telefon',
+                customer_code: 'Kimlik No',
+                notes: 'Notlar',
+                items: 'Fatura Kalemleri',
+                add_item: 'Kalem Ekle',
+                preview: 'Önizleme',
+                save: 'Kaydet',
+                print: 'Yazdır',
+                download_image: 'Resim İndir',
+                download_pdf: 'PDF İndir',
+                close: 'Kapat',
+                cancel: 'İptal',
+                customers: 'Müşteriler',
+                add_customer: 'Müşteri Ekle',
+                customer_address: 'Müşteri Adresi',
+                preview_title: 'Fatura Önizleme',
+                click_preview: 'Faturayı görmek için "Önizleme" tıklayın',
+                color: 'Renk:',
+                invoice_title: 'FATURA',
+                subtotal: 'Ara Toplam',
+                discount: 'İndirim',
+                tax: 'Vergi',
+                total: 'Ödenecek Tutar',
+                words: 'Yazıyla Tutar',
+                seller: 'Satıcı',
+                buyer: 'Alıcı',
+                row: 'Sıra',
+                desc: 'Açıklama',
+                qty: 'Adet',
+                price: 'Birim Fiyat',
+                disc_pct: 'İnd. %',
+                disc_amt: 'İndirim Tutarı',
+                net: 'Net',
+                terms: 'Şartlar ve Notlar',
+                sign_seller: 'Satıcı İmza ve Kaşe',
+                sign_buyer: 'Alıcı İmza',
+                electronic: 'Bu fatura elektronik olarak düzenlenmiştir.',
+                no_customers: 'Kayıtlı müşteri yok',
+                select: 'Seç',
+                currency: '₺',
+                currency_name: 'TL',
+                currency_full: 'Türk Lirası',
+                customer_added: 'Müşteri eklendi',
+                customer_selected: 'Müşteri seçildi',
+                invoice_created: 'Fatura oluşturuldu',
+                invoice_saved: 'Fatura kaydedildi',
+                at_least_one_item: 'En az bir kalem gerekli',
+                enter_customer: 'Lütfen müşteri adını girin',
+                image_downloaded: 'Yüksek kaliteli resim indirildi',
+                pdf_downloaded: 'PDF indirildi',
+                error: 'Hata, lütfen tekrar deneyin'
+            }
+        };
+
+        let currentLang = 'en';
+        let currentInvoice = null;
+        let customers = [];
+        let selectedColor = '#0f2b4a';
+
+        // ============================================================
+        //  LANGUAGE SWITCH
+        // ============================================================
+        function switchLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
+            applyLang(lang);
+            if (currentInvoice) {
+                document.getElementById('invoice-template').innerHTML = createInvoiceHTML(currentInvoice);
+            }
+            // direction & font
+            if (lang === 'en' || lang === 'tr') {
+                document.documentElement.dir = 'ltr';
+                document.body.style.fontFamily = "'Inter', 'Vazirmatn', sans-serif";
+            } else {
+                document.documentElement.dir = 'rtl';
+                document.body.style.fontFamily = "'Vazirmatn', 'Inter', sans-serif";
+            }
+            // update placeholders dynamically
+            updatePlaceholders(lang);
+        }
+
+        function updatePlaceholders(lang) {
+            const t = LANG[lang];
+            document.querySelectorAll('.item-name').forEach(el => el.placeholder = t.desc || 'Item name');
+            document.querySelectorAll('.item-quantity').forEach(el => el.placeholder = t.qty || 'Qty');
+            document.querySelectorAll('.item-price').forEach(el => el.placeholder = t.price || 'Price');
+            document.querySelectorAll('.item-discount').forEach(el => el.placeholder = t.disc_pct || 'Disc %');
+            document.querySelectorAll('.item-desc input').forEach(el => el.placeholder = t.notes || 'Description (optional)');
+        }
+
+        function applyLang(lang) {
+            const t = LANG[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key] !== undefined) el.textContent = t[key];
+            });
+            // selects
+            document.querySelectorAll('#invoice-type option').forEach(opt => {
+                const key = opt.getAttribute('data-i18n');
+                if (key && t[key]) opt.textContent = t[key];
+            });
+            document.querySelectorAll('#payment-method option').forEach(opt => {
+                const key = opt.getAttribute('data-i18n');
+                if (key && t[key]) opt.textContent = t[key];
+            });
+            updatePlaceholders(lang);
+        }
+
+        // ============================================================
+        //  CUSTOMERS
+        // ============================================================
+        function showCustomers() {
+            loadCustomers();
+            document.getElementById('customers-modal').style.display = 'flex';
+        }
+
+        function loadCustomers() {
+            const saved = localStorage.getItem('customers');
+            if (saved) customers = JSON.parse(saved);
+            renderCustomers();
+        }
+
+        function renderCustomers() {
+            const list = document.getElementById('customers-list');
+            const t = LANG[currentLang];
+            list.innerHTML = '';
+            if (!customers.length) {
+                list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray);">${t.no_customers}</div>`;
+                return;
+            }
+            customers.forEach((c, i) => {
+                const div = document.createElement('div');
+                div.className = 'customer-item';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight:600;">${c.name}</div>
+                        <div style="font-size:0.8rem;color:var(--gray);"><i class="fas fa-phone"></i> ${c.phone}</div>
+                    </div>
+                    <button class="btn btn-light btn-sm" onclick="selectCustomer(${i})">${t.select}</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function showAddCustomer() {
+            document.getElementById('add-customer-modal').style.display = 'flex';
+            document.getElementById('customers-modal').style.display = 'none';
+        }
+
+        function saveNewCustomer() {
+            const t = LANG[currentLang];
+            const name = document.getElementById('new-customer-name').value.trim();
+            const phone = document.getElementById('new-customer-phone').value.trim();
+            const address = document.getElementById('new-customer-address').value.trim();
+            if (!name || !phone) { showToast(t.enter_customer, 'error'); return; }
+            customers.push({ id: Date.now(), name, phone, address });
+            localStorage.setItem('customers', JSON.stringify(customers));
+            document.getElementById('new-customer-name').value = '';
+            document.getElementById('new-customer-phone').value = '';
+            document.getElementById('new-customer-address').value = '';
+            closeModal('add-customer-modal');
+            showCustomers();
+            showToast(t.customer_added, 'success');
+        }
+
+        function selectCustomer(index) {
+            const c = customers[index];
+            document.getElementById('customer-name').value = c.name;
+            document.getElementById('customer-phone').value = c.phone;
+            if (c.address) document.getElementById('customer-code').value = c.address;
+            closeModal('customers-modal');
+            showToast(LANG[currentLang].customer_selected, 'success');
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // ============================================================
+        //  ITEMS
+        // ============================================================
+        function addNewItem() {
+            const t = LANG[currentLang];
+            const container = document.getElementById('invoice-items');
+            const item = document.createElement('div');
+            item.className = 'invoice-item';
+            item.innerHTML = `
+                <div class="item-row">
+                    <input type="text" class="form-control item-name" placeholder="${t.desc || 'Item name'}">
+                    <input type="number" class="form-control item-quantity" placeholder="${t.qty || 'Qty'}" value="1" min="1">
+                    <input type="number" class="form-control item-price" placeholder="${t.price || 'Price'}">
+                    <input type="number" class="form-control item-discount" placeholder="${t.disc_pct || 'Disc %'}" value="0" min="0" max="100">
+                    <button class="btn btn-danger" onclick="removeItem(this)"><i class="fas fa-trash"></i></button>
+                </div>
+                <div class="item-row item-desc">
+                    <input type="text" class="form-control" placeholder="${t.notes || 'Description (optional)'}" style="grid-column:1/-1;">
+                </div>
+            `;
+            container.appendChild(item);
+            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function removeItem(btn) {
+            const t = LANG[currentLang];
+            const items = document.querySelectorAll('.invoice-item');
+            if (items.length > 1) btn.closest('.invoice-item').remove();
+            else showToast(t.at_least_one_item, 'error');
+        }
+
+        // ============================================================
+        //  COLOR
+        // ============================================================
+        function setColor(color, el) {
+            selectedColor = color;
+            document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+            if (currentInvoice) {
+                document.getElementById('invoice-template').innerHTML = createInvoiceHTML(currentInvoice);
+            }
+        }
+
+        // ============================================================
+        //  GENERATE INVOICE
+        // ============================================================
+        function collectInvoiceData() {
+            const t = LANG[currentLang];
+            const number = document.getElementById('invoice-number').value;
+            const date = document.getElementById('invoice-date').value;
+            const type = document.getElementById('invoice-type').value;
+            const sellerName = document.getElementById('seller-name').value;
+            const sellerAddress = document.getElementById('seller-address').value;
+            const sellerPhone = document.getElementById('seller-phone').value;
+            const customerName = document.getElementById('customer-name').value;
+            const customerPhone = document.getElementById('customer-phone').value;
+            const customerCode = document.getElementById('customer-code').value;
+            const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+            const payment = document.getElementById('payment-method').value;
+            const notes = document.getElementById('notes').value;
+
+            if (!customerName) { showToast(t.enter_customer, 'error'); return null; }
+
+            const items = [];
+            let subtotal = 0, totalDisc = 0;
+            document.querySelectorAll('.invoice-item').forEach(el => {
+                const name = el.querySelector('.item-name').value;
+                const qty = parseFloat(el.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(el.querySelector('.item-price').value) || 0;
+                const disc = parseFloat(el.querySelector('.item-discount').value) || 0;
+                const desc = el.querySelector('.item-desc input')?.value || '';
+                if (name && qty > 0 && price > 0) {
+                    const total = qty * price;
+                    const dAmt = (total * disc) / 100;
+                    const net = total - dAmt;
+                    subtotal += total;
+                    totalDisc += dAmt;
+                    items.push({ name, qty, price, disc, desc, total, dAmt, net });
+                }
+            });
+            if (!items.length) { showToast(t.at_least_one_item, 'error'); return null; }
+
+            const taxAmt = (subtotal - totalDisc) * taxRate / 100;
+            const grandTotal = subtotal - totalDisc + taxAmt;
+            
+            // Date formatting based on language
+            let displayDate = date;
+            if (currentLang === 'fa') {
+                displayDate = new Intl.DateTimeFormat('fa-IR', { year:'numeric', month:'long', day:'numeric' }).format(new Date());
+            } else if (currentLang === 'tr') {
+                displayDate = new Intl.DateTimeFormat('tr-TR', { year:'numeric', month:'long', day:'numeric' }).format(new Date());
+            } else {
+                displayDate = new Intl.DateTimeFormat('en-US', { year:'numeric', month:'long', day:'numeric' }).format(new Date());
+            }
+
+            return {
+                number, date: displayDate, type,
+                seller: { name: sellerName, address: sellerAddress, phone: sellerPhone },
+                customer: { name: customerName, phone: customerPhone, code: customerCode },
+                items, subtotal, totalDisc, taxRate, taxAmt, grandTotal, payment, notes,
+                color: selectedColor,
+                lang: currentLang
+            };
+        }
+
+        function generateInvoice() {
+            const data = collectInvoiceData();
+            if (!data) return;
+            currentInvoice = data;
+            document.getElementById('invoice-template').innerHTML = createInvoiceHTML(data);
+            showToast(LANG[currentLang].invoice_created, 'success');
+        }
+
+        // ============================================================
+        //  INVOICE HTML (multi-currency, multi-language)
+        // ============================================================
+        function createInvoiceHTML(inv) {
+            const t = LANG[inv.lang || currentLang];
+            const c = inv.color || '#0f2b4a';
+            const currency = t.currency || '$';
+            const currencyName = t.currency_full || 'USD';
+            
+            let rows = '';
+            inv.items.forEach((item, i) => {
+                rows += `
+                    <tr>
+                        <td>${i+1}</td>
+                        <td style="text-align:${inv.lang === 'fa' ? 'right' : 'left'};">
+                            <div style="font-weight:600;">${item.name}</div>
+                            ${item.desc ? `<div style="font-size:0.7rem;color:#666;">${item.desc}</div>` : ''}
+                        </td>
+                        <td>${item.qty}</td>
+                        <td>${item.price.toLocaleString()}</td>
+                        <td>${item.disc}%</td>
+                        <td>${item.dAmt.toLocaleString()}</td>
+                        <td>${item.net.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+
+            const words = numberToWords(inv.grandTotal, inv.lang);
+
+            return `
+                <style>
+                    .inv-wrap-${inv.id} { border-color: ${c}; }
+                    .inv-wrap-${inv.id} .inv-header { border-bottom-color: ${c}; }
+                    .inv-wrap-${inv.id} .inv-box { border-right-color: ${c}; }
+                    .inv-wrap-${inv.id} .inv-totals { border-right-color: ${c}; }
+                    .inv-wrap-${inv.id} .inv-table th { background: ${c}; }
+                    .inv-wrap-${inv.id} .badge-num { background: ${c}; }
+                    .inv-wrap-${inv.id}::before { background: linear-gradient(90deg, ${c}, ${c}cc); }
+                </style>
+                <div class="inv-wrap-${inv.id}" style="position:relative; padding:6px 0;">
+                    <div class="watermark">${inv.seller.name}</div>
+                    <div class="badge-num">${t.inv_no}: ${inv.number}</div>
+
+                    <div class="inv-header">
+                        <h2 style="color:${c};">${t.invoice_title}</h2>
+                        <p><strong>${t.inv_date}:</strong> ${inv.date}</p>
+                        <p style="font-size:0.7rem;color:#666;">${t.electronic}</p>
+                    </div>
+
+                    <div class="inv-duo">
+                        <div class="inv-box">
+                            <h4>${t.seller}</h4>
+                            <p style="font-weight:600;">${inv.seller.name}</p>
+                            <p>${inv.seller.address}</p>
+                            <p>${t.seller_phone}: ${inv.seller.phone}</p>
+                        </div>
+                        <div class="inv-box">
+                            <h4>${t.buyer}</h4>
+                            <p style="font-weight:600;">${inv.customer.name}</p>
+                            <p>${t.customer_phone}: ${inv.customer.phone}</p>
+                            ${inv.customer.code ? `<p>${t.customer_code}: ${inv.customer.code}</p>` : ''}
+                        </div>
+                    </div>
+
+                    <table class="inv-table">
+                        <thead><tr>
+                            <th>${t.row}</th><th>${t.desc}</th><th>${t.qty}</th>
+                            <th>${t.price} (${currency})</th><th>${t.disc_pct}</th><th>${t.disc_amt} (${currency})</th><th>${t.net} (${currency})</th>
+                        </tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+
+                    <div class="inv-totals">
+                        <div class="tot-row"><span>${t.subtotal}:</span><span>${inv.subtotal.toLocaleString()} ${currency}</span></div>
+                        <div class="tot-row"><span>${t.discount}:</span><span>${inv.totalDisc.toLocaleString()} ${currency}</span></div>
+                        <div class="tot-row"><span>${t.tax} (${inv.taxRate}%):</span><span>${inv.taxAmt.toLocaleString()} ${currency}</span></div>
+                        <div class="tot-row"><span>${t.total}:</span><span>${inv.grandTotal.toLocaleString()} ${currency}</span></div>
+                        <div style="margin-top:5px;font-size:0.8rem;"><strong>${t.words}:</strong> ${words} ${currencyName}</div>
+                    </div>
+
+                    ${inv.notes ? `<div class="inv-box" style="border-right-color:${c}; background:#f8fafc; margin-top:10px;"><strong>${t.terms}:</strong> ${inv.notes}</div>` : ''}
+                    <div style="margin:8px 0;padding:5px 14px;background:#f8fafc;border-radius:6px;font-size:0.8rem;">
+                        <strong>${t.payment}:</strong> ${inv.payment}
+                    </div>
+
+                    <div class="inv-footer">
+                        <div class="sign-box"><div style="font-weight:600;">${t.sign_seller}</div><div class="sign-line"></div></div>
+                        <div class="sign-box"><div style="font-weight:600;">${t.sign_buyer}</div><div class="sign-line"></div></div>
+                    </div>
+
+                    <div class="qr-icon"><i class="fas fa-qrcode"></i></div>
+                    <div style="text-align:center;font-size:0.65rem;color:#666;border-top:1px solid #edf2f7;padding-top:10px;margin-top:8px;">
+                        ${inv.seller.name} | ${inv.seller.phone} | ${inv.seller.address}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        //  NUMBER TO WORDS (multi-language)
+        // ============================================================
+        function numberToWords(num, lang) {
+            if (lang === 'fa') return numberToWordsFa(num);
+            if (lang === 'tr') return numberToWordsTr(num);
+            return numberToWordsEn(num);
+        }
+
+        function numberToWordsEn(num) {
+            if (num === 0) return 'Zero';
+            const a = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+            const b = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+            function c3(n) {
+                if (n===0) return '';
+                const h=Math.floor(n/100), r=n%100;
+                let s='';
+                if (h) s+=a[h]+' Hundred ';
+                if (r>0) {
+                    if (r<20) s+=a[r];
+                    else { s+=b[Math.floor(r/10)]; if (r%10) s+=' '+a[r%10]; }
+                }
+                return s.trim();
+            }
+            const mil=Math.floor(num/1000000), tho=Math.floor((num%1000000)/1000), rest=num%1000;
+            let r='';
+            if (mil) r+=c3(mil)+' Million ';
+            if (tho) r+=c3(tho)+' Thousand ';
+            if (rest) r+=c3(rest);
+            return r.trim() || 'Zero';
+        }
+
+        function numberToWordsFa(num) {
+            const units = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+            const teens = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+            const tens = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
+            const hundreds = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+            function c3(n) {
+                if (n===0) return '';
+                const h=Math.floor(n/100), t=Math.floor((n%100)/10), u=n%10;
+                let r='';
+                if (h) r+=hundreds[h]+' و ';
+                if (t===1) r+=teens[u];
+                else { if (t>1) r+=tens[t]+(u?' و ':''); if (u && t!==1) r+=units[u]; }
+                return r.replace(/ و $/, '');
+            }
+            if (num===0) return 'صفر';
+            const mil=Math.floor(num/1000000), tho=Math.floor((num%1000000)/1000), rest=num%1000;
+            let r='';
+            if (mil) r+=c3(mil)+' میلیون و ';
+            if (tho) r+=c3(tho)+' هزار و ';
+            if (rest) r+=c3(rest);
+            return r.replace(/ و $/, '') + ' تومان';
+        }
+
+        function numberToWordsTr(num) {
+            if (num === 0) return 'Sıfır';
+            const a = ['','Bir','İki','Üç','Dört','Beş','Altı','Yedi','Sekiz','Dokuz'];
+            const b = ['','On','Yirmi','Otuz','Kırk','Elli','Altmış','Yetmiş','Seksen','Doksan'];
+            function c3(n) {
+                if (n===0) return '';
+                const h=Math.floor(n/100), r=n%100;
+                let s='';
+                if (h) s+= (h===1 ? 'Yüz' : a[h]+' Yüz');
+                if (r>0) {
+                    if (r<10) s+=' '+a[r];
+                    else { s+=' '+b[Math.floor(r/10)]; if (r%10) s+=' '+a[r%10]; }
+                }
+                return s.trim();
+            }
+            const mil=Math.floor(num/1000000), tho=Math.floor((num%1000000)/1000), rest=num%1000;
+            let r='';
+            if (mil) r+=c3(mil)+' Milyon ';
+            if (tho) r+=c3(tho)+' Bin ';
+            if (rest) r+=c3(rest);
+            return r.trim() || 'Sıfır';
+        }
+
+        // ============================================================
+        //  DOWNLOAD FUNCTIONS
+        // ============================================================
+        function printInvoice() {
+            if (!currentInvoice) { generateInvoice(); setTimeout(() => window.print(), 400); }
+            else window.print();
+        }
+
+        function downloadImage() {
+            if (!currentInvoice) { generateInvoice(); setTimeout(() => captureImage(), 600); }
+            else captureImage();
+        }
+
+        function captureImage() {
+            const t = LANG[currentLang];
+            showLoading(t.image_downloaded);
+            const el = document.getElementById('invoice-template');
+            if (!el) { hideLoading(); showToast(t.error, 'error'); return; }
+            const orig = { width: el.style.width, padding: el.style.padding, minHeight: el.style.minHeight };
+            el.style.width = '820px';
+            el.style.padding = '28px 32px';
+            el.style.minHeight = '1120px';
+
+            html2canvas(el, { scale: 3, useCORS: true, backgroundColor: '#ffffff', logging: false })
+                .then(canvas => {
+                    el.style.width = orig.width;
+                    el.style.padding = orig.padding;
+                    el.style.minHeight = orig.minHeight;
+                    const link = document.createElement('a');
+                    link.download = `invoice_${currentInvoice.number}.png`;
+                    link.href = canvas.toDataURL('image/png', 1.0);
+                    link.click();
+                    hideLoading();
+                    showToast(t.image_downloaded, 'success');
+                })
+                .catch(() => {
+                    el.style.width = orig.width;
+                    el.style.padding = orig.padding;
+                    el.style.minHeight = orig.minHeight;
+                    hideLoading();
+                    showToast(t.error, 'error');
+                });
+        }
+
+        function downloadPDF() {
+            if (!currentInvoice) { generateInvoice(); setTimeout(() => generatePDF(), 600); }
+            else generatePDF();
+        }
+
+        function generatePDF() {
+            const t = LANG[currentLang];
+            showLoading(t.pdf_downloaded);
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const el = document.getElementById('invoice-template');
+            html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false })
+                .then(canvas => {
+                    const img = canvas.toDataURL('image/jpeg', 0.92);
+                    const w = doc.internal.pageSize.getWidth();
+                    const h = (canvas.height / canvas.width) * w;
+                    doc.addImage(img, 'JPEG', 0, 6, w, h);
+                    doc.save(`invoice_${currentInvoice.number}.pdf`);
+                    hideLoading();
+                    showToast(t.pdf_downloaded, 'success');
+                })
+                .catch(() => { hideLoading(); showToast(t.error, 'error'); });
+        }
+
+        function saveInvoice() {
+            const t = LANG[currentLang];
+            const data = collectInvoiceData();
+            if (!data) return;
+            let saved = JSON.parse(localStorage.getItem('savedInvoices')) || [];
+            if (saved.length >= 30) saved = saved.slice(-29);
+            const idx = saved.findIndex(inv => inv.id === data.id);
+            if (idx > -1) saved[idx] = data;
+            else saved.push(data);
+            localStorage.setItem('savedInvoices', JSON.stringify(saved));
+            const num = document.getElementById('invoice-number');
+            const match = num.value.match(/(\d+)$/);
+            if (match) num.value = num.value.replace(/\d+$/, String(Number(match[1]) + 1).padStart(3, '0'));
+            showToast(t.invoice_saved, 'success');
+        }
+
+        // ============================================================
+        //  LOADING / TOAST
+        // ============================================================
+        function showLoading(msg) {
+            document.getElementById('load-text').textContent = msg;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+        function showToast(msg, type='info') {
+            const div = document.createElement('div');
+            div.className = `toast toast-${type}`;
+            div.textContent = msg;
+            document.body.appendChild(div);
+            setTimeout(() => { div.style.opacity='0'; div.style.transform='translateX(-50%) translateY(-18px)'; setTimeout(()=>div.remove(),400); }, 2600);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoice-date').value = today;
+            loadCustomers();
+            applyLang('en');
+            updatePlaceholders('en');
+            // auto-generate on load
+            setTimeout(() => generateInvoice(), 400);
+        });
+    </script>
+
 </body>
 </html>
