@@ -9,7 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
-        /* ===== RESET & ROOT ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #0f2b4a;
@@ -34,7 +33,6 @@
             align-items: center;
             padding: 20px;
         }
-        /* ===== MAIN WRAPPER ===== */
         .app-wrapper {
             max-width: 1440px;
             width: 100%;
@@ -51,7 +49,6 @@
             .app-wrapper { grid-template-columns: 1fr; }
         }
 
-        /* ===== LEFT PANEL (FORM) ===== */
         .form-panel {
             padding: 32px 30px;
             background: white;
@@ -136,7 +133,6 @@
         }
         textarea.form-control { resize: vertical; min-height: 54px; }
 
-        /* Items */
         .items-area { margin: 16px 0 10px; }
         .items-area .card-title {
             font-weight: 700;
@@ -190,6 +186,8 @@
         .btn-light:hover { border-color: var(--primary-light); background: #f7fafc; }
         .btn-accent { background: var(--accent); color: var(--primary); }
         .btn-accent:hover { background: #c49a3a; transform: translateY(-2px); }
+        .btn-telegram { background: #0088cc; color: white; }
+        .btn-telegram:hover { background: #006699; transform: translateY(-2px); }
         .btn-sm { padding: 7px 14px; font-size: 0.78rem; }
 
         .action-row {
@@ -200,7 +198,6 @@
         }
         .action-row .btn { flex: 1; min-width: 110px; }
 
-        /* ===== RIGHT PANEL (PREVIEW) ===== */
         .preview-panel {
             background: #f1f5f9;
             padding: 28px 26px;
@@ -268,9 +265,8 @@
             padding-top: 14px;
             border-top: 1px solid var(--border);
         }
-        .preview-toolbar .btn { min-width: 110px; }
+        .preview-toolbar .btn { min-width: 100px; }
 
-        /* ===== INVOICE STYLES ===== */
         .inv-header { text-align: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--primary); }
         .inv-header h2 { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
         .inv-header p { color: var(--gray); font-size: 0.8rem; }
@@ -292,7 +288,6 @@
         .badge-num { position: absolute; top: 12px; left: 18px; background: var(--primary); color: white; padding: 3px 12px; border-radius: 30px; font-weight: 700; font-size: 0.65rem; }
         .qr-icon { position: absolute; bottom: 14px; left: 18px; font-size: 24px; color: var(--primary); opacity: 0.25; }
 
-        /* ===== COLOR PALETTE ===== */
         .color-palette {
             display: flex;
             gap: 6px;
@@ -310,7 +305,6 @@
         .color-dot:hover { transform: scale(1.10); }
         .color-dot.active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,43,74,0.15); }
 
-        /* ===== MODALS ===== */
         .modal-overlay {
             position: fixed; top:0;left:0;right:0;bottom:0;
             background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
@@ -336,7 +330,6 @@
         .customer-item { padding:12px 16px; border:1px solid var(--border); border-radius:12px; margin-bottom:8px; cursor:pointer; transition:var(--transition); display:flex; justify-content:space-between; align-items:center; }
         .customer-item:hover { border-color:var(--primary-light); background:#f1f5f9; }
 
-        /* ===== LOADING ===== */
         .loading-overlay {
             position:fixed; top:0;left:0;right:0;bottom:0;
             background:rgba(0,0,0,0.7); backdrop-filter:blur(6px);
@@ -347,7 +340,6 @@
         @keyframes spin { to { transform:rotate(360deg); } }
         .load-text { margin-top:16px; font-weight:500; font-size:1rem; }
 
-        /* ===== TOAST ===== */
         .toast {
             position:fixed; top:24px; left:50%; transform:translateX(-50%);
             padding:12px 28px; border-radius:40px; color:white; font-weight:600; font-size:0.9rem;
@@ -359,7 +351,27 @@
         .toast-error { background:var(--danger); }
         .toast-info { background:var(--primary); }
 
-        /* ===== RESPONSIVE ===== */
+        .save-gallery-btn {
+            background: linear-gradient(135deg, #0f2b4a, #1e4a7a);
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(15,43,74,0.3);
+        }
+        .save-gallery-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(15,43,74,0.4);
+        }
+        .save-gallery-btn i { font-size: 1.2rem; }
+
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
             .form-grid .full-width { grid-column: 1; }
@@ -372,6 +384,7 @@
             .preview-panel { padding: 18px 14px; }
             .invoice-template { padding: 18px 14px; }
             .action-row .btn { min-width: 100%; }
+            .save-gallery-btn { width: 100%; justify-content: center; }
         }
         @media (max-width: 480px) {
             .panel-header h1 { font-size: 1.1rem; }
@@ -382,7 +395,6 @@
             .color-dot { width: 24px; height: 24px; }
         }
 
-        /* ===== PRINT ===== */
         @media print {
             body * { visibility: hidden; }
             .invoice-template, .invoice-template * { visibility: visible; }
@@ -390,11 +402,28 @@
             .no-print { display:none !important; }
             @page { size: A4 landscape; margin: 10mm; }
         }
+
+        /* دکمه دانلود اختصاصی برای گالری */
+        .gallery-download-section {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f0f7ff;
+            border-radius: 16px;
+            border: 2px dashed var(--primary-light);
+            text-align: center;
+        }
+        .gallery-download-section p {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        .gallery-download-section .btn {
+            min-width: 180px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- ===== APP WRAPPER ===== -->
     <div class="app-wrapper" id="app">
 
         <!-- ===== LEFT: FORM PANEL ===== -->
@@ -409,7 +438,6 @@
             </div>
 
             <div class="form-grid">
-                <!-- Base Info -->
                 <div class="form-group">
                     <label class="form-label" data-i18n="inv_no">Invoice No</label>
                     <input type="text" class="form-control" id="invoice-number" value="INV-2026-001">
@@ -436,7 +464,6 @@
                     </select>
                 </div>
 
-                <!-- Seller -->
                 <div class="form-group full-width">
                     <label class="form-label" data-i18n="seller_name">Seller Name</label>
                     <input type="text" class="form-control" id="seller-name" value="Parsian Mobile Store">
@@ -454,7 +481,6 @@
                     <input type="number" class="form-control" id="tax-rate" value="9" min="0" max="100">
                 </div>
 
-                <!-- Customer -->
                 <div class="form-group full-width">
                     <label class="form-label" data-i18n="customer_name">Customer Name</label>
                     <div style="display:flex; gap:8px;">
@@ -476,7 +502,6 @@
                 </div>
             </div>
 
-            <!-- Items -->
             <div class="items-area">
                 <div class="card-title"><i class="fas fa-shopping-cart"></i> <span data-i18n="items">Invoice Items</span></div>
                 <div id="invoice-items">
@@ -508,7 +533,6 @@
                 <button class="btn btn-success btn-sm" onclick="addNewItem()" style="margin-top:4px;"><i class="fas fa-plus-circle"></i> <span data-i18n="add_item">Add Item</span></button>
             </div>
 
-            <!-- Color Palette -->
             <div class="color-palette">
                 <span style="font-weight:600; font-size:0.8rem; color:var(--gray);"><span data-i18n="color">Color:</span></span>
                 <span class="color-dot active" style="background:#0f2b4a;" data-color="#0f2b4a" onclick="setColor('#0f2b4a', this)"></span>
@@ -519,7 +543,6 @@
                 <span class="color-dot" style="background:#6b46c1;" data-color="#6b46c1" onclick="setColor('#6b46c1', this)"></span>
             </div>
 
-            <!-- Action Buttons (top) -->
             <div class="action-row">
                 <button class="btn btn-primary" onclick="generateInvoice()"><i class="fas fa-eye"></i> <span data-i18n="preview">Preview</span></button>
                 <button class="btn btn-success" onclick="saveInvoice()"><i class="fas fa-save"></i> <span data-i18n="save">Save</span></button>
@@ -539,10 +562,17 @@
                 </div>
             </div>
 
-            <!-- Download Buttons (bottom) -->
-            <div class="preview-toolbar">
+            <!-- ===== بخش دانلود برای گالری ===== -->
+            <div class="gallery-download-section no-print">
+                <p><i class="fas fa-image" style="color:var(--primary);"></i> <span data-i18n="gallery_hint">برای ذخیره عکس در گالری گوشی، روی دکمه زیر کلیک کنید</span></p>
+                <button class="save-gallery-btn" onclick="downloadToGallery()">
+                    <i class="fas fa-download"></i> 
+                    <span data-i18n="save_gallery">ذخیره در گالری / Save to Gallery</span>
+                </button>
+            </div>
+
+            <div class="preview-toolbar no-print">
                 <button class="btn btn-primary" onclick="printInvoice()"><i class="fas fa-print"></i> <span data-i18n="print">Print</span></button>
-                <button class="btn btn-success" onclick="downloadImage()"><i class="fas fa-download"></i> <span data-i18n="download_image">Download Image</span></button>
                 <button class="btn btn-accent" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> <span data-i18n="download_pdf">Download PDF</span></button>
             </div>
         </div>
@@ -594,7 +624,6 @@
         </div>
     </div>
 
-    <!-- ===== LOADING ===== -->
     <div id="loading-overlay" class="loading-overlay">
         <div class="spinner"></div>
         <div id="load-text" class="load-text">Processing...</div>
@@ -602,7 +631,7 @@
 
     <script>
         // ============================================================
-        //  MULTI-LANGUAGE WITH CURRENCY
+        //  MULTI-LANGUAGE
         // ============================================================
         const LANG = {
             en: {
@@ -631,7 +660,6 @@
                 preview: 'Preview',
                 save: 'Save',
                 print: 'Print',
-                download_image: 'Download Image',
                 download_pdf: 'Download PDF',
                 close: 'Close',
                 cancel: 'Cancel',
@@ -665,16 +693,19 @@
                 currency: '$',
                 currency_name: 'USD',
                 currency_full: 'Dollars',
-                // messages
                 customer_added: 'Customer added successfully',
                 customer_selected: 'Customer selected',
                 invoice_created: 'Invoice created',
                 invoice_saved: 'Invoice saved',
                 at_least_one_item: 'At least one item required',
                 enter_customer: 'Please enter customer name',
-                image_downloaded: 'High-quality image downloaded',
                 pdf_downloaded: 'PDF downloaded',
-                error: 'Error, please try again'
+                error: 'Error, please try again',
+                save_gallery: 'Save to Gallery',
+                gallery_hint: 'To save the image to your phone gallery, click the button below',
+                preparing: 'Preparing high quality image...',
+                saved_gallery: '✅ Image ready! Tap Save to Gallery to save it.',
+                download_hd: 'Download HD Image'
             },
             fa: {
                 brand: 'فاکتورساز حرفه‌ای',
@@ -702,7 +733,6 @@
                 preview: 'پیش‌نمایش',
                 save: 'ذخیره',
                 print: 'چاپ',
-                download_image: 'دانلود عکس',
                 download_pdf: 'دانلود PDF',
                 close: 'بستن',
                 cancel: 'لغو',
@@ -742,9 +772,13 @@
                 invoice_saved: 'فاکتور ذخیره شد',
                 at_least_one_item: 'فاکتور باید حداقل یک آیتم داشته باشد',
                 enter_customer: 'لطفاً نام مشتری را وارد کنید',
-                image_downloaded: 'عکس با کیفیت بالا دانلود شد',
                 pdf_downloaded: 'PDF دانلود شد',
-                error: 'خطا رخ داد، دوباره تلاش کنید'
+                error: 'خطا رخ داد، دوباره تلاش کنید',
+                save_gallery: 'ذخیره در گالری',
+                gallery_hint: 'برای ذخیره عکس در گالری گوشی، روی دکمه زیر کلیک کنید',
+                preparing: 'در حال آماده‌سازی تصویر با کیفیت بالا...',
+                saved_gallery: '✅ تصویر آماده است! برای ذخیره، روی Save to Gallery ضربه بزنید.',
+                download_hd: 'دانلود تصویر با کیفیت بالا'
             },
             tr: {
                 brand: 'Profesyonel Fatura',
@@ -772,7 +806,6 @@
                 preview: 'Önizleme',
                 save: 'Kaydet',
                 print: 'Yazdır',
-                download_image: 'Resim İndir',
                 download_pdf: 'PDF İndir',
                 close: 'Kapat',
                 cancel: 'İptal',
@@ -812,9 +845,13 @@
                 invoice_saved: 'Fatura kaydedildi',
                 at_least_one_item: 'En az bir kalem gerekli',
                 enter_customer: 'Lütfen müşteri adını girin',
-                image_downloaded: 'Yüksek kaliteli resim indirildi',
                 pdf_downloaded: 'PDF indirildi',
-                error: 'Hata, lütfen tekrar deneyin'
+                error: 'Hata, lütfen tekrar deneyin',
+                save_gallery: 'Galeriye Kaydet',
+                gallery_hint: 'Görseli telefon galerinize kaydetmek için aşağıdaki düğmeye tıklayın',
+                preparing: 'Yüksek kaliteli görsel hazırlanıyor...',
+                saved_gallery: '✅ Görsel hazır! Kaydetmek için Save to Gallery\'e dokunun.',
+                download_hd: 'HD Görsel İndir'
             }
         };
 
@@ -823,9 +860,6 @@
         let customers = [];
         let selectedColor = '#0f2b4a';
 
-        // ============================================================
-        //  LANGUAGE SWITCH
-        // ============================================================
         function switchLang(lang) {
             currentLang = lang;
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
@@ -834,15 +868,11 @@
             if (currentInvoice) {
                 document.getElementById('invoice-template').innerHTML = createInvoiceHTML(currentInvoice);
             }
-            // direction & font
             if (lang === 'en' || lang === 'tr') {
                 document.documentElement.dir = 'ltr';
-                document.body.style.fontFamily = "'Inter', 'Vazirmatn', sans-serif";
             } else {
                 document.documentElement.dir = 'rtl';
-                document.body.style.fontFamily = "'Vazirmatn', 'Inter', sans-serif";
             }
-            // update placeholders dynamically
             updatePlaceholders(lang);
         }
 
@@ -861,7 +891,6 @@
                 const key = el.getAttribute('data-i18n');
                 if (t[key] !== undefined) el.textContent = t[key];
             });
-            // selects
             document.querySelectorAll('#invoice-type option').forEach(opt => {
                 const key = opt.getAttribute('data-i18n');
                 if (key && t[key]) opt.textContent = t[key];
@@ -1026,7 +1055,6 @@
             const taxAmt = (subtotal - totalDisc) * taxRate / 100;
             const grandTotal = subtotal - totalDisc + taxAmt;
             
-            // Date formatting based on language
             let displayDate = date;
             if (currentLang === 'fa') {
                 displayDate = new Intl.DateTimeFormat('fa-IR', { year:'numeric', month:'long', day:'numeric' }).format(new Date());
@@ -1055,7 +1083,7 @@
         }
 
         // ============================================================
-        //  INVOICE HTML (multi-currency, multi-language)
+        //  INVOICE HTML
         // ============================================================
         function createInvoiceHTML(inv) {
             const t = LANG[inv.lang || currentLang];
@@ -1153,7 +1181,7 @@
         }
 
         // ============================================================
-        //  NUMBER TO WORDS (multi-language)
+        //  NUMBER TO WORDS
         // ============================================================
         function numberToWords(num, lang) {
             if (lang === 'fa') return numberToWordsFa(num);
@@ -1231,47 +1259,102 @@
         }
 
         // ============================================================
-        //  DOWNLOAD FUNCTIONS
+        //  DOWNLOAD TO GALLERY - روش جدید و تضمینی
+        // ============================================================
+        function downloadToGallery() {
+            if (!currentInvoice) {
+                generateInvoice();
+                setTimeout(() => captureForGallery(), 600);
+            } else {
+                captureForGallery();
+            }
+        }
+
+        function captureForGallery() {
+            const t = LANG[currentLang];
+            showLoading(t.preparing);
+            
+            const el = document.getElementById('invoice-template');
+            
+            // بزرگ کردن برای کیفیت بالا
+            const origWidth = el.style.width;
+            const origPadding = el.style.padding;
+            const origMinHeight = el.style.minHeight;
+            
+            el.style.width = '900px';
+            el.style.padding = '30px 36px';
+            el.style.minHeight = '1200px';
+            
+            // استفاده از html2canvas با کیفیت بالا
+            html2canvas(el, {
+                scale: 4,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                allowTaint: true,
+                width: 900,
+                height: 1200,
+                onclone: function(doc) {
+                    // اطمینان از نمایش کامل
+                }
+            }).then(canvas => {
+                // برگردوندن به حالت اول
+                el.style.width = origWidth || '';
+                el.style.padding = origPadding || '';
+                el.style.minHeight = origMinHeight || '';
+                
+                // تبدیل به دیتا URL
+                const dataUrl = canvas.toDataURL('image/png', 1.0);
+                
+                // ===== روش ۱: دانلود مستقیم (بیشتر مرورگرها) =====
+                const link = document.createElement('a');
+                link.download = `Invoice_${currentInvoice.number}.png`;
+                link.href = dataUrl;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                
+                // ===== روش ۲: برای آیفون و بعضی گوشی‌ها =====
+                setTimeout(() => {
+                    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+                    const isAndroid = /android/i.test(navigator.userAgent);
+                    
+                    if (isIOS) {
+                        // آیفون: باز کردن در تب جدید
+                        window.open(dataUrl, '_blank');
+                    } else if (isAndroid) {
+                        // اندروید: دانلود با لینک (همون روش بالا)
+                        // تلاش دوباره با روش دیگه
+                        const link2 = document.createElement('a');
+                        link2.download = `Invoice_${currentInvoice.number}.png`;
+                        link2.href = dataUrl;
+                        link2.style.display = 'none';
+                        document.body.appendChild(link2);
+                        link2.click();
+                        setTimeout(() => document.body.removeChild(link2), 500);
+                    }
+                    
+                    document.body.removeChild(link);
+                }, 300);
+                
+                hideLoading();
+                showToast(t.saved_gallery, 'success');
+                
+            }).catch((err) => {
+                el.style.width = origWidth || '';
+                el.style.padding = origPadding || '';
+                el.style.minHeight = origMinHeight || '';
+                hideLoading();
+                showToast(t.error + ': ' + err.message, 'error');
+            });
+        }
+
+        // ============================================================
+        //  PRINT & PDF
         // ============================================================
         function printInvoice() {
             if (!currentInvoice) { generateInvoice(); setTimeout(() => window.print(), 400); }
             else window.print();
-        }
-
-        function downloadImage() {
-            if (!currentInvoice) { generateInvoice(); setTimeout(() => captureImage(), 600); }
-            else captureImage();
-        }
-
-        function captureImage() {
-            const t = LANG[currentLang];
-            showLoading(t.image_downloaded);
-            const el = document.getElementById('invoice-template');
-            if (!el) { hideLoading(); showToast(t.error, 'error'); return; }
-            const orig = { width: el.style.width, padding: el.style.padding, minHeight: el.style.minHeight };
-            el.style.width = '820px';
-            el.style.padding = '28px 32px';
-            el.style.minHeight = '1120px';
-
-            html2canvas(el, { scale: 3, useCORS: true, backgroundColor: '#ffffff', logging: false })
-                .then(canvas => {
-                    el.style.width = orig.width;
-                    el.style.padding = orig.padding;
-                    el.style.minHeight = orig.minHeight;
-                    const link = document.createElement('a');
-                    link.download = `invoice_${currentInvoice.number}.png`;
-                    link.href = canvas.toDataURL('image/png', 1.0);
-                    link.click();
-                    hideLoading();
-                    showToast(t.image_downloaded, 'success');
-                })
-                .catch(() => {
-                    el.style.width = orig.width;
-                    el.style.padding = orig.padding;
-                    el.style.minHeight = orig.minHeight;
-                    hideLoading();
-                    showToast(t.error, 'error');
-                });
         }
 
         function downloadPDF() {
@@ -1329,7 +1412,7 @@
             div.className = `toast toast-${type}`;
             div.textContent = msg;
             document.body.appendChild(div);
-            setTimeout(() => { div.style.opacity='0'; div.style.transform='translateX(-50%) translateY(-18px)'; setTimeout(()=>div.remove(),400); }, 2600);
+            setTimeout(() => { div.style.opacity='0'; div.style.transform='translateX(-50%) translateY(-18px)'; setTimeout(()=>div.remove(),400); }, 3000);
         }
 
         // ============================================================
@@ -1341,7 +1424,6 @@
             loadCustomers();
             applyLang('en');
             updatePlaceholders('en');
-            // auto-generate on load
             setTimeout(() => generateInvoice(), 400);
         });
     </script>
