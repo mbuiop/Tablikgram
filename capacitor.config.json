@@ -1,5 +1,5 @@
 {
   "appId": "com.my.invoicer",
   "appName": "Invoicer",
-  "webDir": "."
+  "webDir": "src"
 }
