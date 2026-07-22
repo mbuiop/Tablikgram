@@ -1,5 +1,20 @@
 {
-  "appId": "com.my.invoicer",
-  "appName": "Invoicer",
-  "webDir": "src"
+  "appId": "com.pro.invoicer",
+  "appName": "Pro Invoicer",
+  "webDir": "src",
+  "bundledWebRuntime": false,
+  "android": {
+    "minSdkVersion": 21,
+    "targetSdkVersion": 35,
+    "allowMixedContent": true,
+    "webContentsDebuggingEnabled": false,
+    "buildOptions": {
+      "keystorePath": "",
+      "keystoreAlias": ""
+    }
+  },
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
 }
