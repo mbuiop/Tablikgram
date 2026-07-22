@@ -1,4 +1,4 @@
-name: Build Universal APK
+name: Build Signed APK
 
 on:
   push:
@@ -37,31 +37,25 @@ jobs:
           npx cap add android || true
           npx cap sync android
 
-      - name: Fix Android Build
+      - name: Generate Keystore
         run: |
-          # به‌روزرسانی Gradle
-          cat > android/gradle.properties << EOF
-          android.useAndroidX=true
-          android.enableJetifier=true
-          org.gradle.jvmargs=-Xmx2048m
-          EOF
+          cd android/app
+          keytool -genkey -v -keystore release.keystore -alias proinvoicer -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Pro Invoicer, OU=Dev, O=Company, L=City, S=State, C=US" -storepass 123456 -keypass 123456
 
-      - name: Build Universal APK
+      - name: Build Signed APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease
 
+      - name: Sign APK
+        run: |
+          cd android/app/build/outputs/apk/release
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ../../../../../android/app/release.keystore app-release-unsigned.apk proinvoicer -storepass 123456 -keypass 123456
+          zipalign -v -p 4 app-release-unsigned.apk app-release.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Pro-Invoicer-APK
-          path: android/app/build/outputs/apk/release/*.apk
-          compression-level: 0
-
-      - name: Upload AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: Pro-Invoicer-AAB
-          path: android/app/build/outputs/bundle/release/*.aab
-          compression-level: 0
+          name: Pro-Invoicer-Signed
+          path: android/app/build/outputs/apk/release/app-release.apk
