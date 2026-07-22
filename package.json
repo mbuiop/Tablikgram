@@ -1,22 +1,15 @@
 {
   "name": "pro-invoicer",
   "version": "1.0.0",
-  "description": "Professional Invoice Maker - Full Android Support",
-  "main": "index.js",
+  "description": "Pro Invoicer - Android App",
   "scripts": {
-    "build": "cp -r src/* www/",
-    "sync": "npx cap sync",
-    "open:android": "npx cap open android",
-    "build:apk": "npm run build && npx cap sync android && cd android && chmod +x gradlew && ./gradlew assembleRelease"
+    "sync": "npx cap sync android"
   },
   "dependencies": {
-    "@capacitor/android": "^6.0.0",
-    "@capacitor/core": "^6.0.0",
-    "@capacitor/app": "^6.0.0",
-    "@capacitor/filesystem": "^6.0.0",
-    "@capacitor/preferences": "^6.0.0"
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.0.0"
+    "@capacitor/cli": "^6.1.2"
   }
 }
