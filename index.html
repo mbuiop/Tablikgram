@@ -1,1432 +1,216 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Invoicer · Global</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --primary: #0f2b4a;
-            --primary-light: #1e4a7a;
-            --accent: #d4a843;
-            --success: #1f8b4c;
-            --danger: #b33c3c;
-            --gray: #4a5568;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --shadow: 0 8px 30px rgba(0,0,0,0.07);
-            --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
-            --radius: 20px;
-            --transition: all 0.25s ease;
-        }
-        body {
-            font-family: 'Inter', 'Vazirmatn', sans-serif;
-            background: #eef2f7;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .app-wrapper {
-            max-width: 1440px;
-            width: 100%;
-            background: white;
-            border-radius: 32px;
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 1fr 1.1fr;
-            gap: 0;
-            position: relative;
-        }
-        @media (max-width: 1100px) {
-            .app-wrapper { grid-template-columns: 1fr; }
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>فاکتورساز</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800;900&family=Lalezar&family=Noto+Kufi+Arabic:wght@500;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:#e9eef2;color:#14232b;padding-bottom:96px}
+.app{max-width:600px;margin:auto;padding:10px}
+.stageW{overflow:hidden;border-radius:14px;box-shadow:0 6px 24px #0003;direction:ltr;margin-bottom:12px;background:#fff}
+.stage{transform-origin:top left;width:540px}
+.tabs{display:flex;gap:6px;background:#fff;border-radius:16px;padding:5px;margin-bottom:10px}
+.tabs button{flex:1;border:0;background:none;border-radius:12px;padding:10px 0;font:700 13px Vazirmatn;color:#5b6b75;cursor:pointer}
+.tabs button.on{background:#0f3d4c;color:#fff}
+.pn{display:none;background:#fff;border-radius:18px;padding:14px}
+.pn.on{display:block}
+h3{font-size:13px;font-weight:800;margin:2px 0 10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.lay{flex:1 1 30%;min-width:96px;border:2px solid #e3e9ee;border-radius:14px;background:#f6f9fb;padding:8px;text-align:center;font:700 12px Vazirmatn;cursor:pointer}
+.lay svg{display:block;width:100%;height:52px;margin-bottom:5px}
+.lay.on{border-color:#0f3d4c;background:#fff}
+.fnt{flex:1;border:2px solid #e3e9ee;border-radius:12px;background:#f6f9fb;padding:9px 4px;text-align:center;font-size:17px;cursor:pointer}
+.fnt.on{border-color:#0f3d4c;background:#fff}
+.sw{width:44px;height:44px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #dbe3e8;cursor:pointer}
+.sw.on{box-shadow:0 0 0 3px #111}
+.cc{display:flex;gap:10px;align-items:center;flex:1 1 45%;font-size:12.5px;font-weight:700}
+.cc input{width:52px;height:40px;border:0;background:none;padding:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+label{display:block;font-size:12px;font-weight:500;color:#5b6b75;margin-bottom:3px}
+input[type=text],input:not([type]),input[inputmode]{width:100%;font:500 15px Vazirmatn;padding:10px 12px;border:1.5px solid #dde4e9;border-radius:12px;background:#fafcfd;outline:none;direction:rtl}
+input:focus{border-color:#12909f}
+.item{background:#f4f8fa;border-radius:14px;padding:10px;margin-bottom:8px;position:relative}
+.del{position:absolute;left:8px;top:8px;border:0;background:#fde4e4;color:#c22;border-radius:8px;width:28px;height:28px;font-size:17px;cursor:pointer}
+.btn{border:0;border-radius:14px;padding:12px 16px;font:700 14px Vazirmatn;cursor:pointer}
+.add{background:#e4f3f5;color:#0d6f7c;width:100%}
+.bar{position:fixed;inset:auto 0 0 0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fffe;border-top:1px solid #dde4e9;z-index:5}
+.bar .btn{display:block;width:100%;max-width:576px;margin:auto;background:#0f3d4c;color:#fff;font-size:16px;padding:15px}
+#ov{position:fixed;inset:0;background:#0c0c0c;z-index:99;overflow:auto;display:none}
+#ov img{display:block;width:100%;max-width:700px;margin:auto}
+#ov .ctl{position:fixed;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;gap:10px;justify-content:center}
+#ov .btn{background:#fff;color:#111;box-shadow:0 4px 18px #0006}
 
-        .form-panel {
-            padding: 32px 30px;
-            background: white;
-            overflow-y: auto;
-            max-height: 98vh;
-        }
-        .form-panel::-webkit-scrollbar { width: 4px; }
-        .form-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        .panel-header h1 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .panel-header h1 i { color: var(--accent); }
-        .lang-group {
-            display: flex;
-            gap: 4px;
-            background: #f1f5f9;
-            padding: 4px;
-            border-radius: 40px;
-            border: 1px solid var(--border);
-        }
-        .lang-btn {
-            padding: 6px 16px;
-            border: none;
-            background: transparent;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.78rem;
-            color: var(--gray);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .lang-btn.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        }
-        .lang-btn:hover { color: var(--primary); }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px 22px;
-        }
-        .form-grid .full-width { grid-column: 1 / -1; }
-        .form-group { margin-bottom: 2px; }
-        .form-label {
-            display: block;
-            font-weight: 600;
-            font-size: 0.78rem;
-            color: var(--gray);
-            margin-bottom: 3px;
-            letter-spacing: 0.3px;
-        }
-        .form-control {
-            width: 100%;
-            padding: 11px 16px;
-            border: 1.5px solid var(--border);
-            border-radius: 12px;
-            font-size: 0.88rem;
-            transition: var(--transition);
-            background: white;
-            font-family: inherit;
-        }
-        .form-control:focus {
-            border-color: var(--primary-light);
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(30, 74, 122, 0.10);
-        }
-        textarea.form-control { resize: vertical; min-height: 54px; }
-
-        .items-area { margin: 16px 0 10px; }
-        .items-area .card-title {
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .invoice-item {
-            background: #f8fafc;
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border);
-            transition: var(--transition);
-        }
-        .invoice-item:hover { border-color: var(--primary-light); background: #f1f5f9; }
-        .item-row {
-            display: grid;
-            grid-template-columns: 2fr 0.8fr 1fr 0.8fr auto;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .item-row .form-control { padding: 9px 12px; font-size: 0.82rem; }
-        .item-row .btn { padding: 9px 12px; width: auto; min-width: 36px; }
-        .item-desc { grid-column: 1 / -1; }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 11px 22px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 18px rgba(15,43,74,0.2); }
-        .btn-primary:hover { background: #0a1e33; transform: translateY(-2px); }
-        .btn-success { background: var(--success); color: white; }
-        .btn-success:hover { background: #146d3a; transform: translateY(-2px); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { background: #922e2e; transform: translateY(-2px); }
-        .btn-light { background: white; color: #1a202c; border: 1px solid var(--border); }
-        .btn-light:hover { border-color: var(--primary-light); background: #f7fafc; }
-        .btn-accent { background: var(--accent); color: var(--primary); }
-        .btn-accent:hover { background: #c49a3a; transform: translateY(-2px); }
-        .btn-telegram { background: #0088cc; color: white; }
-        .btn-telegram:hover { background: #006699; transform: translateY(-2px); }
-        .btn-sm { padding: 7px 14px; font-size: 0.78rem; }
-
-        .action-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 10px 0 6px;
-        }
-        .action-row .btn { flex: 1; min-width: 110px; }
-
-        .preview-panel {
-            background: #f1f5f9;
-            padding: 28px 26px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border-left: 1px solid var(--border);
-            min-height: 100%;
-        }
-        @media (max-width: 1100px) {
-            .preview-panel { border-left: none; border-top: 1px solid var(--border); }
-        }
-        .preview-panel .panel-title {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 1.05rem;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .invoice-preview-wrap {
-            width: 100%;
-            max-width: 720px;
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 6px;
-            transition: var(--transition);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .invoice-preview-wrap:hover { box-shadow: var(--shadow-lg); }
-
-        .invoice-template {
-            background: white;
-            border-radius: 14px;
-            padding: 28px 32px;
-            font-family: 'Inter', 'Vazirmatn', sans-serif;
-            position: relative;
-            overflow: hidden;
-            flex: 1;
-            font-size: 0.82rem;
-        }
-        .invoice-template::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-        }
-
-        .preview-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 18px;
-            width: 100%;
-            justify-content: center;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
-        }
-        .preview-toolbar .btn { min-width: 100px; }
-
-        .inv-header { text-align: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--primary); }
-        .inv-header h2 { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-        .inv-header p { color: var(--gray); font-size: 0.8rem; }
-        .inv-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
-        .inv-box { background: #f8fafc; padding: 14px 18px; border-radius: 10px; border-right: 3px solid var(--primary); }
-        .inv-box h4 { font-weight: 700; color: var(--primary); margin-bottom: 4px; font-size: 0.85rem; }
-        .inv-box p { margin: 2px 0; font-size: 0.82rem; }
-        .inv-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.75rem; border: 1px solid var(--border); }
-        .inv-table th { background: var(--primary); color: white; padding: 8px; text-align: center; }
-        .inv-table td { padding: 8px; border: 1px solid var(--border); text-align: center; }
-        .inv-table tbody tr:nth-child(even) { background: #f8fafc; }
-        .inv-totals { background: #f0f7ff; padding: 14px 18px; border-radius: 10px; margin: 14px 0; border-right: 3px solid var(--primary); }
-        .tot-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed #d1d5db; font-size: 0.82rem; }
-        .tot-row:last-child { border-bottom: none; font-weight: 800; font-size: 0.95rem; color: var(--primary); padding-top: 6px; border-top: 2px solid var(--primary); }
-        .inv-footer { margin-top: 18px; padding-top: 14px; border-top: 1px solid #edf2f7; display: flex; justify-content: space-between; gap: 24px; }
-        .sign-box { text-align: center; flex: 1; }
-        .sign-line { border-top: 1px solid #4a5568; margin-top: 32px; padding-top: 4px; min-width: 80px; }
-        .watermark { position: absolute; opacity: 0.03; font-size: 70px; font-weight: 900; color: var(--primary); transform: rotate(-25deg); pointer-events: none; z-index: 0; }
-        .badge-num { position: absolute; top: 12px; left: 18px; background: var(--primary); color: white; padding: 3px 12px; border-radius: 30px; font-weight: 700; font-size: 0.65rem; }
-        .qr-icon { position: absolute; bottom: 14px; left: 18px; font-size: 24px; color: var(--primary); opacity: 0.25; }
-
-        .color-palette {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            margin: 8px 0 6px;
-            flex-wrap: wrap;
-        }
-        .color-dot {
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .color-dot:hover { transform: scale(1.10); }
-        .color-dot.active { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,43,74,0.15); }
-
-        .modal-overlay {
-            position: fixed; top:0;left:0;right:0;bottom:0;
-            background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
-            display: none; justify-content: center; align-items: center;
-            z-index: 2000; padding: 20px;
-        }
-        .modal {
-            background: white; border-radius: 24px; max-width: 460px; width: 100%;
-            max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,0.18);
-            animation: modalIn 0.25s ease;
-        }
-        @keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
-        .modal-header {
-            padding: 18px 24px; border-bottom:1px solid var(--border);
-            display:flex; justify-content:space-between; align-items:center;
-            background: var(--primary); color:white; border-radius:24px 24px 0 0;
-        }
-        .modal-header h3 { font-size:1.05rem; display:flex; align-items:center; gap:10px; }
-        .close-btn { background:rgba(255,255,255,0.12); border:none; width:34px; height:34px; border-radius:50%; color:white; font-size:15px; cursor:pointer; transition:var(--transition); }
-        .close-btn:hover { background:rgba(255,255,255,0.22); transform:rotate(90deg); }
-        .modal-body { padding:22px; }
-        .modal-footer { padding:14px 24px; border-top:1px solid var(--border); display:flex; gap:12px; justify-content:flex-end; background:#f8fafc; border-radius:0 0 24px 24px; }
-        .customer-item { padding:12px 16px; border:1px solid var(--border); border-radius:12px; margin-bottom:8px; cursor:pointer; transition:var(--transition); display:flex; justify-content:space-between; align-items:center; }
-        .customer-item:hover { border-color:var(--primary-light); background:#f1f5f9; }
-
-        .loading-overlay {
-            position:fixed; top:0;left:0;right:0;bottom:0;
-            background:rgba(0,0,0,0.7); backdrop-filter:blur(6px);
-            display:none; flex-direction:column; justify-content:center; align-items:center;
-            z-index:3000; color:white;
-        }
-        .spinner { width:48px; height:48px; border:4px solid rgba(255,255,255,0.15); border-radius:50%; border-top-color:white; animation:spin 0.8s linear infinite; }
-        @keyframes spin { to { transform:rotate(360deg); } }
-        .load-text { margin-top:16px; font-weight:500; font-size:1rem; }
-
-        .toast {
-            position:fixed; top:24px; left:50%; transform:translateX(-50%);
-            padding:12px 28px; border-radius:40px; color:white; font-weight:600; font-size:0.9rem;
-            z-index:5000; box-shadow:0 12px 32px rgba(0,0,0,0.15);
-            animation:toastIn 0.3s ease; max-width:90%; text-align:center;
-        }
-        @keyframes toastIn { from {opacity:0; transform:translateX(-50%) translateY(-18px);} to {opacity:1; transform:translateX(-50%) translateY(0);} }
-        .toast-success { background:var(--success); }
-        .toast-error { background:var(--danger); }
-        .toast-info { background:var(--primary); }
-
-        .save-gallery-btn {
-            background: linear-gradient(135deg, #0f2b4a, #1e4a7a);
-            color: white;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 25px rgba(15,43,74,0.3);
-        }
-        .save-gallery-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(15,43,74,0.4);
-        }
-        .save-gallery-btn i { font-size: 1.2rem; }
-
-        @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .form-grid .full-width { grid-column: 1; }
-            .item-row { grid-template-columns: 1fr 1fr; }
-            .item-row .btn { grid-column: span 2; }
-            .item-desc { grid-column: 1 / -1; }
-            .inv-duo { grid-template-columns: 1fr; }
-            .app-wrapper { border-radius: 18px; }
-            .form-panel { padding: 18px 14px; max-height: none; }
-            .preview-panel { padding: 18px 14px; }
-            .invoice-template { padding: 18px 14px; }
-            .action-row .btn { min-width: 100%; }
-            .save-gallery-btn { width: 100%; justify-content: center; }
-        }
-        @media (max-width: 480px) {
-            .panel-header h1 { font-size: 1.1rem; }
-            .lang-btn { padding: 4px 10px; font-size: 0.7rem; }
-            .invoice-template { font-size: 0.7rem; padding: 14px 10px; }
-            .inv-table th, .inv-table td { padding: 5px 3px; font-size: 0.65rem; }
-            .preview-toolbar .btn { min-width: 100%; }
-            .color-dot { width: 24px; height: 24px; }
-        }
-
-        @media print {
-            body * { visibility: hidden; }
-            .invoice-template, .invoice-template * { visibility: visible; }
-            .invoice-template { position: absolute; left:0; top:0; width:100%; padding:16px; border:none; box-shadow:none; }
-            .no-print { display:none !important; }
-            @page { size: A4 landscape; margin: 10mm; }
-        }
-
-        /* دکمه دانلود اختصاصی برای گالری */
-        .gallery-download-section {
-            margin-top: 12px;
-            padding: 12px;
-            background: #f0f7ff;
-            border-radius: 16px;
-            border: 2px dashed var(--primary-light);
-            text-align: center;
-        }
-        .gallery-download-section p {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-bottom: 10px;
-        }
-        .gallery-download-section .btn {
-            min-width: 180px;
-        }
-    </style>
+/* ===== INVOICE (540px) ===== */
+.inv{width:540px;position:relative;overflow:hidden;direction:rtl;font-family:Vazirmatn,sans-serif;background:var(--bg);color:var(--ink);letter-spacing:0}
+.inv *{letter-spacing:0}
+.inv .in{position:relative;padding:0 28px 24px}
+.inv .hd{position:relative;padding:26px 0 16px;text-align:right}
+.inv .num{display:inline-block;background:var(--c1);color:#fff;font-weight:700;font-size:14px;padding:8px 20px;border-radius:30px}
+.inv h1{font:400 44px/1.3 var(--tf);color:var(--h1);margin-top:6px}
+.inv .date{font-weight:700;font-size:15.5px;margin-top:2px}
+.inv .sub{color:var(--mut);font-size:12.5px;margin-top:3px}
+.inv .deco{position:absolute;left:-28px;top:0}
+.inv .pr{display:flex;gap:10px;margin-bottom:12px}
+.inv .party{flex:1;background:var(--soft);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;min-width:0}
+.inv .av{width:40px;height:40px;border-radius:50%;background:var(--c2);flex:none;display:flex;align-items:center;justify-content:center}
+.inv .party small{display:block;color:var(--c2);font-weight:800;font-size:13px}
+.inv .party b{font-size:16.5px;font-weight:800;line-height:1.4}
+.inv .th,.inv .tr{display:grid;align-items:center;text-align:center;gap:4px;padding:0 12px}
+.inv .th{background:var(--c1);color:#fff;border-radius:14px;height:42px;font-weight:700;font-size:13px}
+.inv .tr{min-height:48px;font-size:14.5px;font-weight:500;padding-top:4px;padding-bottom:4px}
+.inv .tr:nth-child(even){background:var(--zebra)}
+.inv .tr .nm{text-align:right;font-weight:800;font-size:16px;line-height:1.4}
+.inv .tr .fin{color:var(--c2);font-weight:800}
+.inv .tot{margin-top:14px;border-radius:20px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;padding:14px 20px}
+.inv .tot div{display:flex;justify-content:space-between;font-size:15px;padding:5px 0}
+.inv .tot .g{border-top:2px dashed #fff7;margin-top:6px;padding-top:12px;font-size:21px;font-weight:900}
+.inv .wd{margin-top:10px;background:var(--soft);border-radius:16px;padding:12px 16px}
+.inv .wd b{font-size:14px;margin-left:8px}
+.inv .wd span{color:var(--mut);font-size:14px;line-height:1.9}
+.inv .pay{margin-top:12px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
+.inv .pay i{width:24px;height:24px;border-radius:50%;background:var(--c2);display:inline-block}
+.inv .note{margin-top:6px;color:var(--mut);font-size:13px}
+.inv .sg{display:flex;gap:24px;margin-top:16px}
+.inv .sg div{flex:1;border-top:1.5px solid var(--line);text-align:center;padding-top:8px;font-weight:700;font-size:13.5px;height:78px;position:relative}
+.inv .sg img{position:absolute;left:50%;transform:translateX(-50%);bottom:4px;max-height:52px;max-width:80%}
+.inv .ft{margin-top:8px;border-top:1.5px solid var(--line);padding-top:10px;text-align:center;color:var(--mut);font-size:12.5px}
+/* layouts */
+.L-band .hd{margin:0 -28px 14px;padding:26px 28px 22px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:0 0 32px 32px;color:#fff}
+.L-band h1,.L-band .date{color:#fff}.L-band .sub{color:#ffffffd0}.L-band .num{background:#ffffff33}
+.L-side{border-right:16px solid var(--c1)}
+.L-side:after{content:"";position:absolute;right:-16px;bottom:0;width:16px;height:30%;background:var(--c2)}
+.L-min .hd{border-bottom:2.5px solid var(--c1);margin-bottom:14px}
+.L-min .num{background:none;color:var(--c1);border:2px solid var(--c1)}
+.L-min .party{background:none;border:1.5px solid var(--line)}
+.L-min .th{background:none;color:var(--c1);border-bottom:2.5px solid var(--c1);border-radius:0}
+.L-min .tr{background:none!important;border-bottom:1px solid var(--line)}
+.L-min .tot{background:var(--c1)}
+.L-dark:before{content:"";position:absolute;left:-120px;top:-120px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,var(--c2) 0,#0000 68%);opacity:.45}
+.L-dark .num{background:linear-gradient(90deg,var(--c1),var(--c2))}
+.L-dark .tot,.L-dark .th{background:linear-gradient(135deg,var(--c1),var(--c2))}
+.L-card{padding:14px;background:linear-gradient(135deg,var(--c1),var(--c2))}
+.L-card .in{background:#fff;border-radius:26px;color:#14232b}
+.L-card{--ink:#14232b}
+</style>
 </head>
 <body>
+<div class="app">
+  <div class="stageW" id="sw"><div class="stage" id="stage"></div></div>
 
-    <div class="app-wrapper" id="app">
+  <div class="tabs" id="tabs">
+    <button class="on" data-p="p1">طرح</button><button data-p="p2">رنگ</button><button data-p="p3">اطلاعات</button><button data-p="p4">اقلام</button>
+  </div>
 
-        <!-- ===== LEFT: FORM PANEL ===== -->
-        <div class="form-panel">
-            <div class="panel-header">
-                <h1><i class="fas fa-file-invoice"></i> <span data-i18n="brand">Pro Invoicer</span></h1>
-                <div class="lang-group">
-                    <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
-                    <button class="lang-btn" data-lang="fa" onclick="switchLang('fa')">FA</button>
-                    <button class="lang-btn" data-lang="tr" onclick="switchLang('tr')">TR</button>
-                </div>
-            </div>
+  <div class="pn on" id="p1">
+    <h3>طرح قالب</h3><div class="row" id="lays"></div>
+    <h3>فونت عنوان</h3><div class="row" id="fnts"></div>
+  </div>
+  <div class="pn" id="p2">
+    <h3>رنگ آماده</h3><div class="row" id="sws"></div>
+    <h3>رنگ دلخواه</h3>
+    <div class="row"><label class="cc"><input type="color" id="c1" value="#0f3d4c">رنگ اصلی (تیره)</label><label class="cc"><input type="color" id="c2" value="#12909f">رنگ فرعی (روشن)</label></div>
+  </div>
+  <div class="pn" id="p3">
+    <div class="g2"><div><label>شماره فاکتور</label><input id="num" value="۱"></div><div><label>تاریخ</label><input id="date"></div></div>
+    <div class="g2"><div><label>فروشنده</label><input id="seller" value="کسب‌وکار من"></div><div><label>خریدار</label><input id="buyer" value="مشتری"></div></div>
+    <div class="g2"><div><label>مالیات (٪)</label><input id="tax" inputmode="decimal" value="9"></div><div><label>روش پرداخت</label><input id="pay" value="نقدی"></div></div>
+    <div style="margin-bottom:8px"><label>یادداشت (اختیاری)</label><input id="note"></div>
+    <div><label>تصویر امضا/مهر فروشنده (اختیاری)</label><input type="file" id="sig" accept="image/*"></div>
+  </div>
+  <div class="pn" id="p4"><div id="items"></div><button class="btn add" onclick="addItem()">+ افزودن ردیف</button></div>
+</div>
+<div class="bar"><button class="btn" onclick="make()" id="mk">ساخت عکس فاکتور</button></div>
+<div id="ov"><img id="oi" alt="فاکتور"><div class="ctl"><button class="btn" onclick="dl()">دانلود</button><button class="btn" onclick="ov.style.display='none'">بستن</button></div></div>
 
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label" data-i18n="inv_no">Invoice No</label>
-                    <input type="text" class="form-control" id="invoice-number" value="INV-2026-001">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="inv_date">Date</label>
-                    <input type="date" class="form-control" id="invoice-date">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="inv_type">Type</label>
-                    <select class="form-control" id="invoice-type">
-                        <option value="Sale" data-i18n="sale">Sale</option>
-                        <option value="Proforma" data-i18n="proforma">Proforma</option>
-                        <option value="Service" data-i18n="service">Service</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="payment">Payment</label>
-                    <select class="form-control" id="payment-method">
-                        <option value="Cash" data-i18n="cash">Cash</option>
-                        <option value="Card" data-i18n="card">Card</option>
-                        <option value="Check" data-i18n="check">Check</option>
-                        <option value="Bank Transfer" data-i18n="transfer">Bank Transfer</option>
-                    </select>
-                </div>
+<script>
+const $=id=>document.getElementById(id);
+const LAY=[['diag','مورب'],['band','نوار رنگی'],['side','ستون کناری'],['min','مینیمال'],['dark','تیره'],['card','کارت']];
+const FONTS=[['Lalezar','لالەزار'],['Noto Kufi Arabic','کوفی'],['Vazirmatn','وزیر']];
+const PAL=[['#0f3d4c','#12909f'],['#12326b','#2f7cf6'],['#0b5d3b','#22b573'],['#3b1a7a','#8b5cf6'],['#7a1235','#e0426b'],['#b33a00','#ff8a1f'],['#1c1c22','#6b7280'],['#1f2a5a','#ff5c8a'],['#7a5a00','#f2b705'],['#00695c','#26c6da'],['#5b1e1e','#ef4444'],['#0a2540','#00d4aa']];
+let L='diag',F='Lalezar',C=PAL[0].slice(),sig='',items=[{n:'محصول نمونه ۱',q:'1',p:'658',d:''},{n:'محصول نمونه ۲',q:'2',p:'558',d:''}];
 
-                <div class="form-group full-width">
-                    <label class="form-label" data-i18n="seller_name">Seller Name</label>
-                    <input type="text" class="form-control" id="seller-name" value="Parsian Mobile Store">
-                </div>
-                <div class="form-group full-width">
-                    <label class="form-label" data-i18n="seller_address">Seller Address</label>
-                    <textarea class="form-control" id="seller-address" rows="1">Tehran, Valiasr St, No. 240</textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="seller_phone">Phone</label>
-                    <input type="text" class="form-control" id="seller-phone" value="+98 21 1234 5678">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="tax_rate">Tax Rate (%)</label>
-                    <input type="number" class="form-control" id="tax-rate" value="9" min="0" max="100">
-                </div>
+const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const mix=(a,b,t)=>{const x=hx(a),y=hx(b);return '#'+x.map((v,i)=>Math.round(v*(1-t)+y[i]*t).toString(16).padStart(2,'0')).join('')};
+const en=s=>String(s||'').replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632).replace(/[^\d.]/g,'');
+const fa=n=>Math.round(n).toLocaleString('fa-IR');
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('date').value=new Intl.DateTimeFormat('fa-IR-u-ca-persian',{day:'numeric',month:'long',year:'numeric'}).format(new Date());
 
-                <div class="form-group full-width">
-                    <label class="form-label" data-i18n="customer_name">Customer Name</label>
-                    <div style="display:flex; gap:8px;">
-                        <input type="text" class="form-control" id="customer-name" placeholder="Customer name" value="Saeed Kanani" style="flex:1;">
-                        <button class="btn btn-light btn-sm" onclick="showCustomers()"><i class="fas fa-users"></i></button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="customer_phone">Customer Phone</label>
-                    <input type="text" class="form-control" id="customer-phone" value="+98 913 765 7870">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="customer_code">National ID</label>
-                    <input type="text" class="form-control" id="customer-code" placeholder="National ID">
-                </div>
-                <div class="form-group full-width">
-                    <label class="form-label" data-i18n="notes">Notes</label>
-                    <textarea class="form-control" id="notes" rows="1" placeholder="Warranty, delivery terms...">18 months warranty</textarea>
-                </div>
-            </div>
+const O=['','یک','دو','سه','چهار','پنج','شش','هفت','هشت','نه','ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'],
+Tn=['','','بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'],
+H=['','یکصد','دویست','سیصد','چهارصد','پانصد','ششصد','هفتصد','هشتصد','نهصد'],
+SC=['','هزار','میلیون','میلیارد','تریلیون'];
+function three(n){const p=[],h=Math.floor(n/100),r=n%100;if(h)p.push(H[h]);if(r){if(r<20)p.push(O[r]);else{p.push(Tn[Math.floor(r/10)]);if(r%10)p.push(O[r%10])}}return p.join(' و ')}
+function words(n){n=Math.round(n);if(!n)return 'صفر';const g=[];while(n>0){g.push(n%1000);n=Math.floor(n/1000)}
+const p=[];for(let i=g.length-1;i>=0;i--)if(g[i])p.push(three(g[i])+(SC[i]?' '+SC[i]:''));return p.join(' و ')}
 
-            <div class="items-area">
-                <div class="card-title"><i class="fas fa-shopping-cart"></i> <span data-i18n="items">Invoice Items</span></div>
-                <div id="invoice-items">
-                    <div class="invoice-item">
-                        <div class="item-row">
-                            <input type="text" class="form-control item-name" placeholder="Item name" value="Samsung Galaxy S24">
-                            <input type="number" class="form-control item-quantity" placeholder="Qty" value="1" min="1">
-                            <input type="number" class="form-control item-price" placeholder="Price" value="1200">
-                            <input type="number" class="form-control item-discount" placeholder="Disc %" value="5" min="0" max="100">
-                            <button class="btn btn-danger" onclick="removeItem(this)"><i class="fas fa-trash"></i></button>
-                        </div>
-                        <div class="item-row item-desc">
-                            <input type="text" class="form-control" placeholder="Description (optional)" value="S24 256GB, Phantom Black" style="grid-column:1/-1;">
-                        </div>
-                    </div>
-                    <div class="invoice-item">
-                        <div class="item-row">
-                            <input type="text" class="form-control item-name" placeholder="Item name" value="Xiaomi Power Bank">
-                            <input type="number" class="form-control item-quantity" placeholder="Qty" value="1" min="1">
-                            <input type="number" class="form-control item-price" placeholder="Price" value="65">
-                            <input type="number" class="form-control item-discount" placeholder="Disc %" value="0" min="0" max="100">
-                            <button class="btn btn-danger" onclick="removeItem(this)"><i class="fas fa-trash"></i></button>
-                        </div>
-                        <div class="item-row item-desc">
-                            <input type="text" class="form-control" placeholder="Description (optional)" value="20000mAh, Fast Charge" style="grid-column:1/-1;">
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-success btn-sm" onclick="addNewItem()" style="margin-top:4px;"><i class="fas fa-plus-circle"></i> <span data-i18n="add_item">Add Item</span></button>
-            </div>
+/* mini layout icons */
+function icon(k){const a=C[0],b=C[1],w='#fff',g='#dfe6ea';
+const base=`<rect x="1" y="1" width="98" height="50" rx="6" fill="${k=='dark'?'#111827':k=='card'?a:w}" stroke="${g}"/>`;
+const lines=`<rect x="14" y="34" width="72" height="4" rx="2" fill="${k=='dark'?'#334155':g}"/><rect x="14" y="42" width="52" height="4" rx="2" fill="${k=='dark'?'#334155':g}"/>`;
+const m={diag:`<polygon points="1,1 46,1 30,28 1,28" fill="${a}"/><rect x="60" y="8" width="26" height="6" rx="3" fill="${b}"/>`,
+band:`<path d="M1 7a6 6 0 0 1 6-6h86a6 6 0 0 1 6 6v14q0 8-10 8H11Q1 29 1 21z" fill="${a}"/>`,
+side:`<rect x="88" y="1" width="11" height="50" fill="${a}"/><rect x="88" y="30" width="11" height="21" fill="${b}"/><rect x="50" y="8" width="30" height="7" rx="3" fill="${a}"/>`,
+min:`<rect x="14" y="8" width="30" height="7" rx="3" fill="${a}"/><rect x="14" y="20" width="72" height="2" fill="${a}"/>`,
+dark:`<circle cx="12" cy="8" r="20" fill="${b}" opacity=".5"/><rect x="50" y="8" width="30" height="7" rx="3" fill="${b}"/>`,
+card:`<rect x="7" y="6" width="86" height="40" rx="7" fill="${w}"/><rect x="50" y="12" width="30" height="7" rx="3" fill="${b}"/>`};
+return `<svg viewBox="0 0 100 52">${base}${m[k]}${k=='card'?'':lines}</svg>`}
 
-            <div class="color-palette">
-                <span style="font-weight:600; font-size:0.8rem; color:var(--gray);"><span data-i18n="color">Color:</span></span>
-                <span class="color-dot active" style="background:#0f2b4a;" data-color="#0f2b4a" onclick="setColor('#0f2b4a', this)"></span>
-                <span class="color-dot" style="background:#1e4a7a;" data-color="#1e4a7a" onclick="setColor('#1e4a7a', this)"></span>
-                <span class="color-dot" style="background:#b33c3c;" data-color="#b33c3c" onclick="setColor('#b33c3c', this)"></span>
-                <span class="color-dot" style="background:#1f8b4c;" data-color="#1f8b4c" onclick="setColor('#1f8b4c', this)"></span>
-                <span class="color-dot" style="background:#b7791f;" data-color="#b7791f" onclick="setColor('#b7791f', this)"></span>
-                <span class="color-dot" style="background:#6b46c1;" data-color="#6b46c1" onclick="setColor('#6b46c1', this)"></span>
-            </div>
+function panels(){
+ $('lays').innerHTML=LAY.map(([k,n])=>`<div class="lay ${k==L?'on':''}" onclick="L='${k}';panels();draw()">${icon(k)}${n}</div>`).join('');
+ $('fnts').innerHTML=FONTS.map(([k,n])=>`<div class="fnt ${k==F?'on':''}" style="font-family:'${k}'" onclick="F='${k}';panels();draw()">${n}</div>`).join('');
+ $('sws').innerHTML=PAL.map((p,i)=>`<div class="sw ${p[0]==C[0]&&p[1]==C[1]?'on':''}" style="background:linear-gradient(135deg,${p[0]},${p[1]})" onclick="C=PAL[${i}].slice();$('c1').value=C[0];$('c2').value=C[1];panels();draw()"></div>`).join('')}
+$('c1').oninput=e=>{C[0]=e.target.value;panels();draw()};$('c2').oninput=e=>{C[1]=e.target.value;panels();draw()};
+function itemList(){$('items').innerHTML=items.map((it,i)=>`<div class="item"><button class="del" onclick="items.splice(${i},1);itemList();draw()">×</button>
+<label>شرح کالا/خدمت</label><input value="${esc(it.n)}" oninput="items[${i}].n=this.value;draw()" style="margin-bottom:6px">
+<div class="g2" style="margin:0"><div><label>تعداد</label><input inputmode="decimal" value="${it.q}" oninput="items[${i}].q=this.value;draw()"></div><div><label>قیمت واحد (تومان)</label><input inputmode="decimal" value="${it.p}" oninput="items[${i}].p=this.value;draw()"></div></div>
+<div style="margin-top:6px"><label>تخفیف (تومان)</label><input inputmode="decimal" value="${it.d}" oninput="items[${i}].d=this.value;draw()"></div></div>`).join('')}
+function addItem(){items.push({n:'',q:'1',p:'',d:''});itemList();draw()}
+$('sig').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{sig=r.result;draw()};r.readAsDataURL(f)};
+['num','date','seller','buyer','tax','pay','note'].forEach(k=>$(k).oninput=draw);
+$('tabs').onclick=e=>{const p=e.target.dataset.p;if(!p)return;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b==e.target));document.querySelectorAll('.pn').forEach(x=>x.classList.toggle('on',x.id==p))};
 
-            <div class="action-row">
-                <button class="btn btn-primary" onclick="generateInvoice()"><i class="fas fa-eye"></i> <span data-i18n="preview">Preview</span></button>
-                <button class="btn btn-success" onclick="saveInvoice()"><i class="fas fa-save"></i> <span data-i18n="save">Save</span></button>
-            </div>
-        </div>
+function deco(){const doc=`<g transform="rotate(-8 90 130)"><rect x="40" y="52" width="110" height="140" rx="14" fill="#fff"/><g stroke="${C[1]}" stroke-width="7" stroke-linecap="round"><path d="M62 90h66M62 116h66M62 142h44"/></g></g><circle cx="150" cy="200" r="30" fill="#2fbf1d"/><path d="M135 200l11 11 20-22" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+ return `<svg class="deco" width="250" height="170" viewBox="0 0 500 340"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="${C[0]}"/><stop offset="1" stop-color="${C[1]}"/></linearGradient></defs><polygon points="0,0 380,0 240,340 0,340" fill="url(#g1)"/><polygon points="0,0 250,0 120,250 0,250" fill="#fff" opacity=".13"/>${doc}</svg>`}
+const person='<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4.5"/><path d="M3.5 21c0-5 4-7 8.500-7s8.500 2 8.500 7z"/></svg>';
 
-        <!-- ===== RIGHT: PREVIEW PANEL ===== -->
-        <div class="preview-panel">
-            <div class="panel-title"><i class="fas fa-file-invoice"></i> <span data-i18n="preview_title">Invoice Preview</span></div>
+function invHTML(){
+ const tax=parseFloat(en($('tax').value))||0,dark=L==='dark';
+ const list=items.filter(it=>it.n.trim()||parseFloat(en(it.p))>0);
+ let sub=0,dis=0;
+ const calc=list.map(it=>{const q=parseFloat(en(it.q))||0,p=parseFloat(en(it.p))||0,d=parseFloat(en(it.d))||0;sub+=q*p;dis+=d;return{n:it.n,q,p,d}});
+ const hasD=dis>0,cols=hasD?'26px 1fr 34px 72px 58px 88px':'26px 1fr 38px 86px 100px';
+ const rows=calc.map((r,i)=>`<div class="tr" style="grid-template-columns:${cols}"><span>${fa(i+1)}</span><div class="nm">${esc(r.n)||'—'}</div><span>${fa(r.q)}</span><span>${fa(r.p)}</span>${hasD?`<span>${r.d?fa(r.d):'—'}</span>`:''}<span class="fin">${fa(r.q*r.p-r.d)}</span></div>`).join('');
+ const base=sub-dis,tx=base*tax/100,total=base+tx;
+ const soft=dark?'#ffffff12':mix(C[1],'#ffffff',.9);
+ const vars=`--c1:${dark?mix(C[0],C[1],.35):C[0]};--c2:${C[1]};--soft:${soft};--bg:${dark?'#0c111b':'#fff'};--ink:${dark?'#eef3f8':'#14232b'};--mut:${dark?'#93a3b5':'#66757f'};--line:${dark?'#ffffff26':'#dfe7eb'};--zebra:${dark?'#ffffff0a':mix(C[1],'#ffffff',.95)};--h1:${dark?mix(C[1],'#ffffff',.3):C[0]};--tf:'${F}',Vazirmatn`;
+ return `<div class="inv L-${L}" style="${vars}"><div class="in"><div class="hd">${L==='diag'?deco():''}<div class="num">شماره فاکتور: ${esc($('num').value)}</div><h1>فاکتور فروش</h1><div class="date">تاریخ: ${esc($('date').value)}</div><div class="sub">این فاکتور به‌صورت الکترونیکی صادر شده است.</div></div>
+<div class="pr"><div class="party"><div class="av">${person}</div><div><small>فروشنده</small><b>${esc($('seller').value)}</b></div></div><div class="party"><div class="av">${person}</div><div><small>خریدار</small><b>${esc($('buyer').value)}</b></div></div></div>
+<div class="th" style="grid-template-columns:${cols}"><span>ردیف</span><span style="text-align:right">شرح کالا/خدمت</span><span>تعداد</span><span>قیمت</span>${hasD?'<span>تخفیف</span>':''}<span>مبلغ نهایی</span></div>${rows}
+<div class="tot"><div><span>جمع جزء</span><span>${fa(sub)} تومان</span></div>${hasD?`<div><span>تخفیف</span><span>${fa(dis)} تومان</span></div>`:''}<div><span>مالیات (${fa(tax)}٪)</span><span>${fa(tx)} تومان</span></div><div class="g"><span>مبلغ قابل پرداخت</span><span>${fa(total)} تومان</span></div></div>
+<div class="wd"><b>به حروف:</b><span>${words(total)} تومان</span></div>
+<div class="pay"><i></i>روش پرداخت: ${esc($('pay').value)}</div>${$('note').value?`<div class="note">${esc($('note').value)}</div>`:''}
+<div class="sg"><div>امضای خریدار</div><div>امضا و مهر فروشنده${sig?`<img src="${sig}">`:''}</div></div>
+<div class="ft">— ${esc($('seller').value)} —</div></div></div>`}
 
-            <div class="invoice-preview-wrap">
-                <div class="invoice-template" id="invoice-template">
-                    <div style="text-align:center; padding:40px 20px; color:var(--gray);">
-                        <i class="fas fa-file-invoice" style="font-size:44px; opacity:0.25; margin-bottom:14px;"></i>
-                        <p data-i18n="click_preview">Click "Preview" to generate invoice</p>
-                    </div>
-                </div>
-            </div>
+function draw(){$('stage').innerHTML=invHTML();fit()}
+function fit(){const w=$('sw').clientWidth,k=Math.min(1,w/540),s=$('stage');s.style.transform=`scale(${k})`;$('sw').style.height=s.offsetHeight*k+'px'}
+addEventListener('resize',fit);
 
-            <!-- ===== بخش دانلود برای گالری ===== -->
-            <div class="gallery-download-section no-print">
-                <p><i class="fas fa-image" style="color:var(--primary);"></i> <span data-i18n="gallery_hint">برای ذخیره عکس در گالری گوشی، روی دکمه زیر کلیک کنید</span></p>
-                <button class="save-gallery-btn" onclick="downloadToGallery()">
-                    <i class="fas fa-download"></i> 
-                    <span data-i18n="save_gallery">ذخیره در گالری / Save to Gallery</span>
-                </button>
-            </div>
+async function make(){
+ const b=$('mk');b.disabled=true;b.textContent='در حال ساخت…';
+ try{await document.fonts.ready;
+  const box=document.createElement('div');box.style.cssText='position:fixed;left:-99999px;top:0;width:540px';box.innerHTML=invHTML();document.body.appendChild(box);
+  const c=await html2canvas(box.firstElementChild,{scale:3,useCORS:true,backgroundColor:null});box.remove();
+  $('oi').src=c.toDataURL('image/png');$('ov').style.display='block';$('ov').scrollTop=0;
+ }catch(e){alert('ساخت عکس ناموفق بود. اتصال اینترنت (برای فونت‌ها) را بررسی کنید.')}
+ b.disabled=false;b.textContent='ساخت عکس فاکتور'}
+function dl(){const a=document.createElement('a');a.href=$('oi').src;a.download='invoice-'+en($('num').value||'1')+'.png';a.click()}
 
-            <div class="preview-toolbar no-print">
-                <button class="btn btn-primary" onclick="printInvoice()"><i class="fas fa-print"></i> <span data-i18n="print">Print</span></button>
-                <button class="btn btn-accent" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> <span data-i18n="download_pdf">Download PDF</span></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== MODALS ===== -->
-    <div id="customers-modal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-users"></i> <span data-i18n="customers">Customers</span></h3>
-                <button class="close-btn" onclick="closeModal('customers-modal')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <button class="btn btn-primary" onclick="showAddCustomer()" style="width:100%; margin-bottom:14px;">
-                    <i class="fas fa-user-plus"></i> <span data-i18n="add_customer">Add New Customer</span>
-                </button>
-                <div id="customers-list"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-light" onclick="closeModal('customers-modal')"><span data-i18n="close">Close</span></button>
-            </div>
-        </div>
-    </div>
-
-    <div id="add-customer-modal" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3><i class="fas fa-user-plus"></i> <span data-i18n="add_customer">Add Customer</span></h3>
-                <button class="close-btn" onclick="closeModal('add-customer-modal')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label" data-i18n="customer_name">Full Name</label>
-                    <input type="text" class="form-control" id="new-customer-name" placeholder="Full name">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="customer_phone">Phone</label>
-                    <input type="tel" class="form-control" id="new-customer-phone" placeholder="+98 912 345 6789">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" data-i18n="customer_address">Address</label>
-                    <textarea class="form-control" id="new-customer-address" rows="2" placeholder="Full address"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-light" onclick="closeModal('add-customer-modal')"><span data-i18n="cancel">Cancel</span></button>
-                <button class="btn btn-primary" onclick="saveNewCustomer()"><span data-i18n="save">Save</span></button>
-            </div>
-        </div>
-    </div>
-
-    <div id="loading-overlay" class="loading-overlay">
-        <div class="spinner"></div>
-        <div id="load-text" class="load-text">Processing...</div>
-    </div>
-
-    <script>
-        // ============================================================
-        //  MULTI-LANGUAGE
-        // ============================================================
-        const LANG = {
-            en: {
-                brand: 'Pro Invoicer',
-                inv_no: 'Invoice No',
-                inv_date: 'Date',
-                inv_type: 'Type',
-                sale: 'Sale',
-                proforma: 'Proforma',
-                service: 'Service',
-                payment: 'Payment',
-                cash: 'Cash',
-                card: 'Card',
-                check: 'Check',
-                transfer: 'Bank Transfer',
-                seller_name: 'Seller Name',
-                seller_address: 'Seller Address',
-                seller_phone: 'Phone',
-                tax_rate: 'Tax Rate (%)',
-                customer_name: 'Customer Name',
-                customer_phone: 'Customer Phone',
-                customer_code: 'National ID',
-                notes: 'Notes',
-                items: 'Invoice Items',
-                add_item: 'Add Item',
-                preview: 'Preview',
-                save: 'Save',
-                print: 'Print',
-                download_pdf: 'Download PDF',
-                close: 'Close',
-                cancel: 'Cancel',
-                customers: 'Customers',
-                add_customer: 'Add Customer',
-                customer_address: 'Customer Address',
-                preview_title: 'Invoice Preview',
-                click_preview: 'Click "Preview" to generate invoice',
-                color: 'Color:',
-                invoice_title: 'INVOICE',
-                subtotal: 'Subtotal',
-                discount: 'Discount',
-                tax: 'Tax',
-                total: 'Total Amount',
-                words: 'Amount in Words',
-                seller: 'Seller',
-                buyer: 'Buyer',
-                row: 'Row',
-                desc: 'Description',
-                qty: 'Qty',
-                price: 'Unit Price',
-                disc_pct: 'Disc. %',
-                disc_amt: 'Disc. Amount',
-                net: 'Net',
-                terms: 'Terms & Conditions',
-                sign_seller: 'Seller Signature & Stamp',
-                sign_buyer: 'Buyer Signature',
-                electronic: 'This invoice is electronically issued.',
-                no_customers: 'No customers registered',
-                select: 'Select',
-                currency: '$',
-                currency_name: 'USD',
-                currency_full: 'Dollars',
-                customer_added: 'Customer added successfully',
-                customer_selected: 'Customer selected',
-                invoice_created: 'Invoice created',
-                invoice_saved: 'Invoice saved',
-                at_least_one_item: 'At least one item required',
-                enter_customer: 'Please enter customer name',
-                pdf_downloaded: 'PDF downloaded',
-                error: 'Error, please try again',
-                save_gallery: 'Save to Gallery',
-                gallery_hint: 'To save the image to your phone gallery, click the button below',
-                preparing: 'Preparing high quality image...',
-                saved_gallery: '✅ Image ready! Tap Save to Gallery to save it.',
-                download_hd: 'Download HD Image'
-            },
-            fa: {
-                brand: 'فاکتورساز حرفه‌ای',
-                inv_no: 'شماره فاکتور',
-                inv_date: 'تاریخ',
-                inv_type: 'نوع',
-                sale: 'فروش',
-                proforma: 'پیش فاکتور',
-                service: 'خدمات',
-                payment: 'پرداخت',
-                cash: 'نقدی',
-                card: 'کارت به کارت',
-                check: 'چک',
-                transfer: 'انتقال بانکی',
-                seller_name: 'نام فروشنده',
-                seller_address: 'آدرس فروشنده',
-                seller_phone: 'تلفن',
-                tax_rate: 'مالیات (%)',
-                customer_name: 'نام مشتری',
-                customer_phone: 'تلفن مشتری',
-                customer_code: 'کد ملی',
-                notes: 'توضیحات',
-                items: 'اقلام فاکتور',
-                add_item: 'افزودن آیتم',
-                preview: 'پیش‌نمایش',
-                save: 'ذخیره',
-                print: 'چاپ',
-                download_pdf: 'دانلود PDF',
-                close: 'بستن',
-                cancel: 'لغو',
-                customers: 'مشتریان',
-                add_customer: 'افزودن مشتری',
-                customer_address: 'آدرس مشتری',
-                preview_title: 'پیش‌نمایش فاکتور',
-                click_preview: 'برای مشاهده فاکتور، دکمه "پیش‌نمایش" را بزنید',
-                color: 'رنگ:',
-                invoice_title: 'فاکتور',
-                subtotal: 'جمع کل',
-                discount: 'تخفیف',
-                tax: 'مالیات',
-                total: 'مبلغ قابل پرداخت',
-                words: 'مبلغ به حروف',
-                seller: 'فروشنده',
-                buyer: 'خریدار',
-                row: 'ردیف',
-                desc: 'شرح کالا / خدمت',
-                qty: 'تعداد',
-                price: 'قیمت واحد',
-                disc_pct: 'تخفیف %',
-                disc_amt: 'مبلغ تخفیف',
-                net: 'جمع',
-                terms: 'شرایط و توضیحات',
-                sign_seller: 'امضا و مهر فروشنده',
-                sign_buyer: 'امضا خریدار',
-                electronic: 'این فاکتور به صورت الکترونیکی صادر شده است.',
-                no_customers: 'هیچ مشتری ثبت نشده است',
-                select: 'انتخاب',
-                currency: 'تومان',
-                currency_name: 'تومان',
-                currency_full: 'تومان',
-                customer_added: 'مشتری با موفقیت اضافه شد',
-                customer_selected: 'مشتری انتخاب شد',
-                invoice_created: 'فاکتور ایجاد شد',
-                invoice_saved: 'فاکتور ذخیره شد',
-                at_least_one_item: 'فاکتور باید حداقل یک آیتم داشته باشد',
-                enter_customer: 'لطفاً نام مشتری را وارد کنید',
-                pdf_downloaded: 'PDF دانلود شد',
-                error: 'خطا رخ داد، دوباره تلاش کنید',
-                save_gallery: 'ذخیره در گالری',
-                gallery_hint: 'برای ذخیره عکس در گالری گوشی، روی دکمه زیر کلیک کنید',
-                preparing: 'در حال آماده‌سازی تصویر با کیفیت بالا...',
-                saved_gallery: '✅ تصویر آماده است! برای ذخیره، روی Save to Gallery ضربه بزنید.',
-                download_hd: 'دانلود تصویر با کیفیت بالا'
-            },
-            tr: {
-                brand: 'Profesyonel Fatura',
-                inv_no: 'Fatura No',
-                inv_date: 'Tarih',
-                inv_type: 'Tür',
-                sale: 'Satış',
-                proforma: 'Ön Fatura',
-                service: 'Hizmet',
-                payment: 'Ödeme',
-                cash: 'Nakit',
-                card: 'Kart',
-                check: 'Çek',
-                transfer: 'Banka Havalesi',
-                seller_name: 'Satıcı Adı',
-                seller_address: 'Satıcı Adresi',
-                seller_phone: 'Telefon',
-                tax_rate: 'Vergi Oranı (%)',
-                customer_name: 'Müşteri Adı',
-                customer_phone: 'Müşteri Telefon',
-                customer_code: 'Kimlik No',
-                notes: 'Notlar',
-                items: 'Fatura Kalemleri',
-                add_item: 'Kalem Ekle',
-                preview: 'Önizleme',
-                save: 'Kaydet',
-                print: 'Yazdır',
-                download_pdf: 'PDF İndir',
-                close: 'Kapat',
-                cancel: 'İptal',
-                customers: 'Müşteriler',
-                add_customer: 'Müşteri Ekle',
-                customer_address: 'Müşteri Adresi',
-                preview_title: 'Fatura Önizleme',
-                click_preview: 'Faturayı görmek için "Önizleme" tıklayın',
-                color: 'Renk:',
-                invoice_title: 'FATURA',
-                subtotal: 'Ara Toplam',
-                discount: 'İndirim',
-                tax: 'Vergi',
-                total: 'Ödenecek Tutar',
-                words: 'Yazıyla Tutar',
-                seller: 'Satıcı',
-                buyer: 'Alıcı',
-                row: 'Sıra',
-                desc: 'Açıklama',
-                qty: 'Adet',
-                price: 'Birim Fiyat',
-                disc_pct: 'İnd. %',
-                disc_amt: 'İndirim Tutarı',
-                net: 'Net',
-                terms: 'Şartlar ve Notlar',
-                sign_seller: 'Satıcı İmza ve Kaşe',
-                sign_buyer: 'Alıcı İmza',
-                electronic: 'Bu fatura elektronik olarak düzenlenmiştir.',
-                no_customers: 'Kayıtlı müşteri yok',
-                select: 'Seç',
-                currency: '₺',
-                currency_name: 'TL',
-                currency_full: 'Türk Lirası',
-                customer_added: 'Müşteri eklendi',
-                customer_selected: 'Müşteri seçildi',
-                invoice_created: 'Fatura oluşturuldu',
-                invoice_saved: 'Fatura kaydedildi',
-                at_least_one_item: 'En az bir kalem gerekli',
-                enter_customer: 'Lütfen müşteri adını girin',
-                pdf_downloaded: 'PDF indirildi',
-                error: 'Hata, lütfen tekrar deneyin',
-                save_gallery: 'Galeriye Kaydet',
-                gallery_hint: 'Görseli telefon galerinize kaydetmek için aşağıdaki düğmeye tıklayın',
-                preparing: 'Yüksek kaliteli görsel hazırlanıyor...',
-                saved_gallery: '✅ Görsel hazır! Kaydetmek için Save to Gallery\'e dokunun.',
-                download_hd: 'HD Görsel İndir'
-            }
-        };
-
-        let currentLang = 'en';
-        let currentInvoice = null;
-        let customers = [];
-        let selectedColor = '#0f2b4a';
-
-        function switchLang(lang) {
-            currentLang = lang;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
-            applyLang(lang);
-            if (currentInvoice) {
-                document.getElementById('invoice-template').innerHTML = createInvoiceHTML(currentInvoice);
-            }
-            if (lang === 'en' || lang === 'tr') {
-                document.documentElement.dir = 'ltr';
-            } else {
-                document.documentElement.dir = 'rtl';
-            }
-            updatePlaceholders(lang);
-        }
-
-        function updatePlaceholders(lang) {
-            const t = LANG[lang];
-            document.querySelectorAll('.item-name').forEach(el => el.placeholder = t.desc || 'Item name');
-            document.querySelectorAll('.item-quantity').forEach(el => el.placeholder = t.qty || 'Qty');
-            document.querySelectorAll('.item-price').forEach(el => el.placeholder = t.price || 'Price');
-            document.querySelectorAll('.item-discount').forEach(el => el.placeholder = t.disc_pct || 'Disc %');
-            document.querySelectorAll('.item-desc input').forEach(el => el.placeholder = t.notes || 'Description (optional)');
-        }
-
-        function applyLang(lang) {
-            const t = LANG[lang];
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (t[key] !== undefined) el.textContent = t[key];
-            });
-            document.querySelectorAll('#invoice-type option').forEach(opt => {
-                const key = opt.getAttribute('data-i18n');
-                if (key && t[key]) opt.textContent = t[key];
-            });
-            document.querySelectorAll('#payment-method option').forEach(opt => {
-                const key = opt.getAttribute('data-i18n');
-                if (key && t[key]) opt.textContent = t[key];
-            });
-            updatePlaceholders(lang);
-        }
-
-        // ============================================================
-        //  CUSTOMERS
-        // ============================================================
-        function showCustomers() {
-            loadCustomers();
-            document.getElementById('customers-modal').style.display = 'flex';
-        }
-
-        function loadCustomers() {
-            const saved = localStorage.getItem('customers');
-            if (saved) customers = JSON.parse(saved);
-            renderCustomers();
-        }
-
-        function renderCustomers() {
-            const list = document.getElementById('customers-list');
-            const t = LANG[currentLang];
-            list.innerHTML = '';
-            if (!customers.length) {
-                list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray);">${t.no_customers}</div>`;
-                return;
-            }
-            customers.forEach((c, i) => {
-                const div = document.createElement('div');
-                div.className = 'customer-item';
-                div.innerHTML = `
-                    <div>
-                        <div style="font-weight:600;">${c.name}</div>
-                        <div style="font-size:0.8rem;color:var(--gray);"><i class="fas fa-phone"></i> ${c.phone}</div>
-                    </div>
-                    <button class="btn btn-light btn-sm" onclick="selectCustomer(${i})">${t.select}</button>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        function showAddCustomer() {
-            document.getElementById('add-customer-modal').style.display = 'flex';
-            document.getElementById('customers-modal').style.display = 'none';
-        }
-
-        function saveNewCustomer() {
-            const t = LANG[currentLang];
-            const name = document.getElementById('new-customer-name').value.trim();
-            const phone = document.getElementById('new-customer-phone').value.trim();
-            const address = document.getElementById('new-customer-address').value.trim();
-            if (!name || !phone) { showToast(t.enter_customer, 'error'); return; }
-            customers.push({ id: Date.now(), name, phone, address });
-            localStorage.setItem('customers', JSON.stringify(customers));
-            document.getElementById('new-customer-name').value = '';
-            document.getElementById('new-customer-phone').value = '';
-            document.getElementById('new-customer-address').value = '';
-            closeModal('add-customer-modal');
-            showCustomers();
-            showToast(t.customer_added, 'success');
-        }
-
-        function selectCustomer(index) {
-            const c = customers[index];
-            document.getElementById('customer-name').value = c.name;
-            document.getElementById('customer-phone').value = c.phone;
-            if (c.address) document.getElementById('customer-code').value = c.address;
-            closeModal('customers-modal');
-            showToast(LANG[currentLang].customer_selected, 'success');
-        }
-
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        // ============================================================
-        //  ITEMS
-        // ============================================================
-        function addNewItem() {
-            const t = LANG[currentLang];
-            const container = document.getElementById('invoice-items');
-            const item = document.createElement('div');
-            item.className = 'invoice-item';
-            item.innerHTML = `
-                <div class="item-row">
-                    <input type="text" class="form-control item-name" placeholder="${t.desc || 'Item name'}">
-                    <input type="number" class="form-control item-quantity" placeholder="${t.qty || 'Qty'}" value="1" min="1">
-                    <input type="number" class="form-control item-price" placeholder="${t.price || 'Price'}">
-                    <input type="number" class="form-control item-discount" placeholder="${t.disc_pct || 'Disc %'}" value="0" min="0" max="100">
-                    <button class="btn btn-danger" onclick="removeItem(this)"><i class="fas fa-trash"></i></button>
-                </div>
-                <div class="item-row item-desc">
-                    <input type="text" class="form-control" placeholder="${t.notes || 'Description (optional)'}" style="grid-column:1/-1;">
-                </div>
-            `;
-            container.appendChild(item);
-            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function removeItem(btn) {
-            const t = LANG[currentLang];
-            const items = document.querySelectorAll('.invoice-item');
-            if (items.length > 1) btn.closest('.invoice-item').remove();
-            else showToast(t.at_least_one_item, 'error');
-        }
-
-        // ============================================================
-        //  COLOR
-        // ============================================================
-        function setColor(color, el) {
-            selectedColor = color;
-            document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-            el.classList.add('active');
-            if (currentInvoice) {
-                document.getElementById('invoice-template').innerHTML = createInvoiceHTML(currentInvoice);
-            }
-        }
-
-        // ============================================================
-        //  GENERATE INVOICE
-        // ============================================================
-        function collectInvoiceData() {
-            const t = LANG[currentLang];
-            const number = document.getElementById('invoice-number').value;
-            const date = document.getElementById('invoice-date').value;
-            const type = document.getElementById('invoice-type').value;
-            const sellerName = document.getElementById('seller-name').value;
-            const sellerAddress = document.getElementById('seller-address').value;
-            const sellerPhone = document.getElementById('seller-phone').value;
-            const customerName = document.getElementById('customer-name').value;
-            const customerPhone = document.getElementById('customer-phone').value;
-            const customerCode = document.getElementById('customer-code').value;
-            const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
-            const payment = document.getElementById('payment-method').value;
-            const notes = document.getElementById('notes').value;
-
-            if (!customerName) { showToast(t.enter_customer, 'error'); return null; }
-
-            const items = [];
-            let subtotal = 0, totalDisc = 0;
-            document.querySelectorAll('.invoice-item').forEach(el => {
-                const name = el.querySelector('.item-name').value;
-                const qty = parseFloat(el.querySelector('.item-quantity').value) || 0;
-                const price = parseFloat(el.querySelector('.item-price').value) || 0;
-                const disc = parseFloat(el.querySelector('.item-discount').value) || 0;
-                const desc = el.querySelector('.item-desc input')?.value || '';
-                if (name && qty > 0 && price > 0) {
-                    const total = qty * price;
-                    const dAmt = (total * disc) / 100;
-                    const net = total - dAmt;
-                    subtotal += total;
-                    totalDisc += dAmt;
-                    items.push({ name, qty, price, disc, desc, total, dAmt, net });
-                }
-            });
-            if (!items.length) { showToast(t.at_least_one_item, 'error'); return null; }
-
-            const taxAmt = (subtotal - totalDisc) * taxRate / 100;
-            const grandTotal = subtotal - totalDisc + taxAmt;
-            
-            let displayDate = date;
-            if (currentLang === 'fa') {
-                displayDate = new Intl.DateTimeFormat('fa-IR', { year:'numeric', month:'long', day:'numeric' }).format(new Date());
-            } else if (currentLang === 'tr') {
-                displayDate = new Intl.DateTimeFormat('tr-TR', { year:'numeric', month:'long', day:'numeric' }).format(new Date());
-            } else {
-                displayDate = new Intl.DateTimeFormat('en-US', { year:'numeric', month:'long', day:'numeric' }).format(new Date());
-            }
-
-            return {
-                number, date: displayDate, type,
-                seller: { name: sellerName, address: sellerAddress, phone: sellerPhone },
-                customer: { name: customerName, phone: customerPhone, code: customerCode },
-                items, subtotal, totalDisc, taxRate, taxAmt, grandTotal, payment, notes,
-                color: selectedColor,
-                lang: currentLang
-            };
-        }
-
-        function generateInvoice() {
-            const data = collectInvoiceData();
-            if (!data) return;
-            currentInvoice = data;
-            document.getElementById('invoice-template').innerHTML = createInvoiceHTML(data);
-            showToast(LANG[currentLang].invoice_created, 'success');
-        }
-
-        // ============================================================
-        //  INVOICE HTML
-        // ============================================================
-        function createInvoiceHTML(inv) {
-            const t = LANG[inv.lang || currentLang];
-            const c = inv.color || '#0f2b4a';
-            const currency = t.currency || '$';
-            const currencyName = t.currency_full || 'USD';
-            
-            let rows = '';
-            inv.items.forEach((item, i) => {
-                rows += `
-                    <tr>
-                        <td>${i+1}</td>
-                        <td style="text-align:${inv.lang === 'fa' ? 'right' : 'left'};">
-                            <div style="font-weight:600;">${item.name}</div>
-                            ${item.desc ? `<div style="font-size:0.7rem;color:#666;">${item.desc}</div>` : ''}
-                        </td>
-                        <td>${item.qty}</td>
-                        <td>${item.price.toLocaleString()}</td>
-                        <td>${item.disc}%</td>
-                        <td>${item.dAmt.toLocaleString()}</td>
-                        <td>${item.net.toLocaleString()}</td>
-                    </tr>
-                `;
-            });
-
-            const words = numberToWords(inv.grandTotal, inv.lang);
-
-            return `
-                <style>
-                    .inv-wrap-${inv.id} { border-color: ${c}; }
-                    .inv-wrap-${inv.id} .inv-header { border-bottom-color: ${c}; }
-                    .inv-wrap-${inv.id} .inv-box { border-right-color: ${c}; }
-                    .inv-wrap-${inv.id} .inv-totals { border-right-color: ${c}; }
-                    .inv-wrap-${inv.id} .inv-table th { background: ${c}; }
-                    .inv-wrap-${inv.id} .badge-num { background: ${c}; }
-                    .inv-wrap-${inv.id}::before { background: linear-gradient(90deg, ${c}, ${c}cc); }
-                </style>
-                <div class="inv-wrap-${inv.id}" style="position:relative; padding:6px 0;">
-                    <div class="watermark">${inv.seller.name}</div>
-                    <div class="badge-num">${t.inv_no}: ${inv.number}</div>
-
-                    <div class="inv-header">
-                        <h2 style="color:${c};">${t.invoice_title}</h2>
-                        <p><strong>${t.inv_date}:</strong> ${inv.date}</p>
-                        <p style="font-size:0.7rem;color:#666;">${t.electronic}</p>
-                    </div>
-
-                    <div class="inv-duo">
-                        <div class="inv-box">
-                            <h4>${t.seller}</h4>
-                            <p style="font-weight:600;">${inv.seller.name}</p>
-                            <p>${inv.seller.address}</p>
-                            <p>${t.seller_phone}: ${inv.seller.phone}</p>
-                        </div>
-                        <div class="inv-box">
-                            <h4>${t.buyer}</h4>
-                            <p style="font-weight:600;">${inv.customer.name}</p>
-                            <p>${t.customer_phone}: ${inv.customer.phone}</p>
-                            ${inv.customer.code ? `<p>${t.customer_code}: ${inv.customer.code}</p>` : ''}
-                        </div>
-                    </div>
-
-                    <table class="inv-table">
-                        <thead><tr>
-                            <th>${t.row}</th><th>${t.desc}</th><th>${t.qty}</th>
-                            <th>${t.price} (${currency})</th><th>${t.disc_pct}</th><th>${t.disc_amt} (${currency})</th><th>${t.net} (${currency})</th>
-                        </tr></thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-
-                    <div class="inv-totals">
-                        <div class="tot-row"><span>${t.subtotal}:</span><span>${inv.subtotal.toLocaleString()} ${currency}</span></div>
-                        <div class="tot-row"><span>${t.discount}:</span><span>${inv.totalDisc.toLocaleString()} ${currency}</span></div>
-                        <div class="tot-row"><span>${t.tax} (${inv.taxRate}%):</span><span>${inv.taxAmt.toLocaleString()} ${currency}</span></div>
-                        <div class="tot-row"><span>${t.total}:</span><span>${inv.grandTotal.toLocaleString()} ${currency}</span></div>
-                        <div style="margin-top:5px;font-size:0.8rem;"><strong>${t.words}:</strong> ${words} ${currencyName}</div>
-                    </div>
-
-                    ${inv.notes ? `<div class="inv-box" style="border-right-color:${c}; background:#f8fafc; margin-top:10px;"><strong>${t.terms}:</strong> ${inv.notes}</div>` : ''}
-                    <div style="margin:8px 0;padding:5px 14px;background:#f8fafc;border-radius:6px;font-size:0.8rem;">
-                        <strong>${t.payment}:</strong> ${inv.payment}
-                    </div>
-
-                    <div class="inv-footer">
-                        <div class="sign-box"><div style="font-weight:600;">${t.sign_seller}</div><div class="sign-line"></div></div>
-                        <div class="sign-box"><div style="font-weight:600;">${t.sign_buyer}</div><div class="sign-line"></div></div>
-                    </div>
-
-                    <div class="qr-icon"><i class="fas fa-qrcode"></i></div>
-                    <div style="text-align:center;font-size:0.65rem;color:#666;border-top:1px solid #edf2f7;padding-top:10px;margin-top:8px;">
-                        ${inv.seller.name} | ${inv.seller.phone} | ${inv.seller.address}
-                    </div>
-                </div>
-            `;
-        }
-
-        // ============================================================
-        //  NUMBER TO WORDS
-        // ============================================================
-        function numberToWords(num, lang) {
-            if (lang === 'fa') return numberToWordsFa(num);
-            if (lang === 'tr') return numberToWordsTr(num);
-            return numberToWordsEn(num);
-        }
-
-        function numberToWordsEn(num) {
-            if (num === 0) return 'Zero';
-            const a = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
-            const b = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
-            function c3(n) {
-                if (n===0) return '';
-                const h=Math.floor(n/100), r=n%100;
-                let s='';
-                if (h) s+=a[h]+' Hundred ';
-                if (r>0) {
-                    if (r<20) s+=a[r];
-                    else { s+=b[Math.floor(r/10)]; if (r%10) s+=' '+a[r%10]; }
-                }
-                return s.trim();
-            }
-            const mil=Math.floor(num/1000000), tho=Math.floor((num%1000000)/1000), rest=num%1000;
-            let r='';
-            if (mil) r+=c3(mil)+' Million ';
-            if (tho) r+=c3(tho)+' Thousand ';
-            if (rest) r+=c3(rest);
-            return r.trim() || 'Zero';
-        }
-
-        function numberToWordsFa(num) {
-            const units = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
-            const teens = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
-            const tens = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
-            const hundreds = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
-            function c3(n) {
-                if (n===0) return '';
-                const h=Math.floor(n/100), t=Math.floor((n%100)/10), u=n%10;
-                let r='';
-                if (h) r+=hundreds[h]+' و ';
-                if (t===1) r+=teens[u];
-                else { if (t>1) r+=tens[t]+(u?' و ':''); if (u && t!==1) r+=units[u]; }
-                return r.replace(/ و $/, '');
-            }
-            if (num===0) return 'صفر';
-            const mil=Math.floor(num/1000000), tho=Math.floor((num%1000000)/1000), rest=num%1000;
-            let r='';
-            if (mil) r+=c3(mil)+' میلیون و ';
-            if (tho) r+=c3(tho)+' هزار و ';
-            if (rest) r+=c3(rest);
-            return r.replace(/ و $/, '') + ' تومان';
-        }
-
-        function numberToWordsTr(num) {
-            if (num === 0) return 'Sıfır';
-            const a = ['','Bir','İki','Üç','Dört','Beş','Altı','Yedi','Sekiz','Dokuz'];
-            const b = ['','On','Yirmi','Otuz','Kırk','Elli','Altmış','Yetmiş','Seksen','Doksan'];
-            function c3(n) {
-                if (n===0) return '';
-                const h=Math.floor(n/100), r=n%100;
-                let s='';
-                if (h) s+= (h===1 ? 'Yüz' : a[h]+' Yüz');
-                if (r>0) {
-                    if (r<10) s+=' '+a[r];
-                    else { s+=' '+b[Math.floor(r/10)]; if (r%10) s+=' '+a[r%10]; }
-                }
-                return s.trim();
-            }
-            const mil=Math.floor(num/1000000), tho=Math.floor((num%1000000)/1000), rest=num%1000;
-            let r='';
-            if (mil) r+=c3(mil)+' Milyon ';
-            if (tho) r+=c3(tho)+' Bin ';
-            if (rest) r+=c3(rest);
-            return r.trim() || 'Sıfır';
-        }
-
-        // ============================================================
-        //  DOWNLOAD TO GALLERY - روش جدید و تضمینی
-        // ============================================================
-        function downloadToGallery() {
-            if (!currentInvoice) {
-                generateInvoice();
-                setTimeout(() => captureForGallery(), 600);
-            } else {
-                captureForGallery();
-            }
-        }
-
-        function captureForGallery() {
-            const t = LANG[currentLang];
-            showLoading(t.preparing);
-            
-            const el = document.getElementById('invoice-template');
-            
-            // بزرگ کردن برای کیفیت بالا
-            const origWidth = el.style.width;
-            const origPadding = el.style.padding;
-            const origMinHeight = el.style.minHeight;
-            
-            el.style.width = '900px';
-            el.style.padding = '30px 36px';
-            el.style.minHeight = '1200px';
-            
-            // استفاده از html2canvas با کیفیت بالا
-            html2canvas(el, {
-                scale: 4,
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                logging: false,
-                allowTaint: true,
-                width: 900,
-                height: 1200,
-                onclone: function(doc) {
-                    // اطمینان از نمایش کامل
-                }
-            }).then(canvas => {
-                // برگردوندن به حالت اول
-                el.style.width = origWidth || '';
-                el.style.padding = origPadding || '';
-                el.style.minHeight = origMinHeight || '';
-                
-                // تبدیل به دیتا URL
-                const dataUrl = canvas.toDataURL('image/png', 1.0);
-                
-                // ===== روش ۱: دانلود مستقیم (بیشتر مرورگرها) =====
-                const link = document.createElement('a');
-                link.download = `Invoice_${currentInvoice.number}.png`;
-                link.href = dataUrl;
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                
-                // ===== روش ۲: برای آیفون و بعضی گوشی‌ها =====
-                setTimeout(() => {
-                    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-                    const isAndroid = /android/i.test(navigator.userAgent);
-                    
-                    if (isIOS) {
-                        // آیفون: باز کردن در تب جدید
-                        window.open(dataUrl, '_blank');
-                    } else if (isAndroid) {
-                        // اندروید: دانلود با لینک (همون روش بالا)
-                        // تلاش دوباره با روش دیگه
-                        const link2 = document.createElement('a');
-                        link2.download = `Invoice_${currentInvoice.number}.png`;
-                        link2.href = dataUrl;
-                        link2.style.display = 'none';
-                        document.body.appendChild(link2);
-                        link2.click();
-                        setTimeout(() => document.body.removeChild(link2), 500);
-                    }
-                    
-                    document.body.removeChild(link);
-                }, 300);
-                
-                hideLoading();
-                showToast(t.saved_gallery, 'success');
-                
-            }).catch((err) => {
-                el.style.width = origWidth || '';
-                el.style.padding = origPadding || '';
-                el.style.minHeight = origMinHeight || '';
-                hideLoading();
-                showToast(t.error + ': ' + err.message, 'error');
-            });
-        }
-
-        // ============================================================
-        //  PRINT & PDF
-        // ============================================================
-        function printInvoice() {
-            if (!currentInvoice) { generateInvoice(); setTimeout(() => window.print(), 400); }
-            else window.print();
-        }
-
-        function downloadPDF() {
-            if (!currentInvoice) { generateInvoice(); setTimeout(() => generatePDF(), 600); }
-            else generatePDF();
-        }
-
-        function generatePDF() {
-            const t = LANG[currentLang];
-            showLoading(t.pdf_downloaded);
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-            const el = document.getElementById('invoice-template');
-            html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false })
-                .then(canvas => {
-                    const img = canvas.toDataURL('image/jpeg', 0.92);
-                    const w = doc.internal.pageSize.getWidth();
-                    const h = (canvas.height / canvas.width) * w;
-                    doc.addImage(img, 'JPEG', 0, 6, w, h);
-                    doc.save(`invoice_${currentInvoice.number}.pdf`);
-                    hideLoading();
-                    showToast(t.pdf_downloaded, 'success');
-                })
-                .catch(() => { hideLoading(); showToast(t.error, 'error'); });
-        }
-
-        function saveInvoice() {
-            const t = LANG[currentLang];
-            const data = collectInvoiceData();
-            if (!data) return;
-            let saved = JSON.parse(localStorage.getItem('savedInvoices')) || [];
-            if (saved.length >= 30) saved = saved.slice(-29);
-            const idx = saved.findIndex(inv => inv.id === data.id);
-            if (idx > -1) saved[idx] = data;
-            else saved.push(data);
-            localStorage.setItem('savedInvoices', JSON.stringify(saved));
-            const num = document.getElementById('invoice-number');
-            const match = num.value.match(/(\d+)$/);
-            if (match) num.value = num.value.replace(/\d+$/, String(Number(match[1]) + 1).padStart(3, '0'));
-            showToast(t.invoice_saved, 'success');
-        }
-
-        // ============================================================
-        //  LOADING / TOAST
-        // ============================================================
-        function showLoading(msg) {
-            document.getElementById('load-text').textContent = msg;
-            document.getElementById('loading-overlay').style.display = 'flex';
-        }
-        function hideLoading() {
-            document.getElementById('loading-overlay').style.display = 'none';
-        }
-        function showToast(msg, type='info') {
-            const div = document.createElement('div');
-            div.className = `toast toast-${type}`;
-            div.textContent = msg;
-            document.body.appendChild(div);
-            setTimeout(() => { div.style.opacity='0'; div.style.transform='translateX(-50%) translateY(-18px)'; setTimeout(()=>div.remove(),400); }, 3000);
-        }
-
-        // ============================================================
-        //  INIT
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('invoice-date').value = today;
-            loadCustomers();
-            applyLang('en');
-            updatePlaceholders('en');
-            setTimeout(() => generateInvoice(), 400);
-        });
-    </script>
-
+panels();itemList();draw();document.fonts.ready.then(draw);
+</script>
 </body>
 </html>
